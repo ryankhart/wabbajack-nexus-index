@@ -57,11 +57,11 @@ test("computes the published bucket number", () => {
   assert.throws(() => bucketForMod(1, 0));
 });
 
-test("creates alphabetized rows with count, classification, and links", () => {
+test("sorts rows by descending mod count with deterministic title ties", () => {
   const modlists = {
     "repo/Beta": {
       title: "Beta List",
-      nexusModCount: 900,
+      nexusModCount: 1300,
       classification: "NSFW",
       wabbajackUrl: "https://www.wabbajack.org/modlist/repo/Beta",
       galleryUrl: "https://www.wabbajack.org/#/modlists/gallery",
@@ -77,9 +77,27 @@ test("creates alphabetized rows with count, classification, and links", () => {
       readmeUrl: "",
       status: "indexed",
     },
+    "repo/Gamma": {
+      title: "Gamma List",
+      nexusModCount: 1200,
+      classification: "SFW",
+      wabbajackUrl: "https://www.wabbajack.org/modlist/repo/Gamma",
+      galleryUrl: "https://www.wabbajack.org/#/modlists/gallery",
+      readmeUrl: "",
+      status: "indexed",
+    },
   };
 
-  assert.deepEqual(createListRows(["repo/Beta", "repo/Alpha"], modlists), [
+  assert.deepEqual(createListRows(["repo/Gamma", "repo/Alpha", "repo/Beta"], modlists), [
+    {
+      stableId: "repo/Beta",
+      title: "Beta List",
+      modCount: 1300,
+      classification: "NSFW",
+      wabbajackUrl: "https://www.wabbajack.org/modlist/repo/Beta",
+      galleryUrl: "https://www.wabbajack.org/#/modlists/gallery",
+      readmeUrl: "https://example.test/beta",
+    },
     {
       stableId: "repo/Alpha",
       title: "Alpha List",
@@ -90,13 +108,13 @@ test("creates alphabetized rows with count, classification, and links", () => {
       readmeUrl: "",
     },
     {
-      stableId: "repo/Beta",
-      title: "Beta List",
-      modCount: 900,
-      classification: "NSFW",
-      wabbajackUrl: "https://www.wabbajack.org/modlist/repo/Beta",
+      stableId: "repo/Gamma",
+      title: "Gamma List",
+      modCount: 1200,
+      classification: "SFW",
+      wabbajackUrl: "https://www.wabbajack.org/modlist/repo/Gamma",
       galleryUrl: "https://www.wabbajack.org/#/modlists/gallery",
-      readmeUrl: "https://example.test/beta",
+      readmeUrl: "",
     },
   ]);
 });

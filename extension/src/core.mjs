@@ -93,6 +93,7 @@ export function createListRows(stableIds, modlists) {
     });
   }
   rows.sort((left, right) =>
+    right.modCount - left.modCount ||
     left.title.localeCompare(right.title, undefined, { sensitivity: "base" }) ||
     left.stableId.localeCompare(right.stableId)
   );

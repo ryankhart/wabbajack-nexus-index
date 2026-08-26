@@ -34,7 +34,7 @@ DOM selectors remain adapter details and must be discovered/verified against the
 
 ### REQ-EXT-003: Show all matching Wabbajack lists
 
-- AC-EXT-008: Given N matching list IDs, then all N are available in the expanded panel, sorted by title, with no silent display cap.
+- AC-EXT-008: Given N matching list IDs, then all N are available in the expanded panel, sorted by descending unique Nexus mod-page count with title and stable ID as deterministic tie-breakers, with no silent display cap.
 - AC-EXT-009: Each row shows linked list title and `<count> mods` in blue. Lists classified `NSFW` by Wabbajack additionally show `Adult` in red; non-NSFW lists show no classification label.
 - AC-EXT-010: Each row links its title to the official Wabbajack `/modlist/$repo/$id` resolver. Gallery and author README URLs remain distinct published metadata for future surfaces but are not required as additional row links in v1.
 - AC-EXT-011: The displayed count is clearly defined by tooltip/accessible text as unique Nexus mod pages indexed from the current Wabbajack manifest.
