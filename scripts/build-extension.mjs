@@ -13,6 +13,10 @@ const CONTENT_MATCHES = [
   "https://www.nexusmods.com/*/mods/*",
   "https://next.nexusmods.com/*/mods/*",
 ];
+const RESOURCE_MATCHES = [
+  "https://www.nexusmods.com/*",
+  "https://next.nexusmods.com/*",
+];
 
 function manifestFor(target) {
   const manifest = {
@@ -47,7 +51,7 @@ function manifestFor(target) {
     web_accessible_resources: [
       {
         resources: ["assets/*.png", "data/*.json", "data/games/*/*.json"],
-        matches: CONTENT_MATCHES,
+        matches: RESOURCE_MATCHES,
       },
     ],
   };

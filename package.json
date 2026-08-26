@@ -8,7 +8,7 @@
     "test:python": "python -m unittest discover -s tests/python -v",
     "test:js": "node --test tests/js/*.test.mjs",
     "test": "npm run test:python && npm run test:js",
-    "build": "node scripts/build-extension.mjs",
+    "build": "node scripts/build-extension.mjs && python scripts/package_extensions.py",
     "verify": "npm test && npm run build"
   },
   "engines": {

@@ -49,9 +49,10 @@ DOM selectors remain adapter details and must be discovered/verified against the
 
 ### REQ-EXT-005: Work in Chrome and Firefox
 
-- AC-EXT-017: One source tree builds valid Manifest V3 packages for current Chrome and Firefox.
+- AC-EXT-017: One source tree builds valid Manifest V3 directories plus a Chrome development ZIP and Firefox development XPI from the same generated dataset.
 - AC-EXT-018: Host permissions are limited to supported Nexus page origins and the configured static dataset origin.
 - AC-EXT-019: The package contains no remotely executed code, telemetry, Nexus credential collection, or unsafe HTML insertion.
+- AC-EXT-029: Each development archive contains exactly the files and bytes from its corresponding built target directory, and Chrome/Firefox package contents differ only where browser-specific manifest metadata requires it.
 
 ### REQ-EXT-006: Accessible native interaction
 
@@ -104,13 +105,13 @@ Pure tests cover URL parsing, projection, ordering, and safe DOM construction. S
 | AC-EXT-004–007 | mount/navigation tests | EXT-T2 |
 | AC-EXT-008–012 | rendering/order tests | EXT-T3 |
 | AC-EXT-013–016 | resilience-state tests | EXT-T4 |
-| AC-EXT-017–019 | manifest/build validation | EXT-T5 |
+| AC-EXT-017–019, AC-EXT-029 | manifest/build and archive parity validation | EXT-T5, EXT-T8 |
 | AC-EXT-020–023 | accessibility + browser geometry/screenshots | EXT-T6 |
 | AC-EXT-024–028 | manifest/build tests + raster dimension checks + small-size screenshots | EXT-T7 |
 
 ## Success Criteria
 
-Both browser packages load without errors and, on a known indexed Nexus mod page, show the exact matching list set with required blue counts, red `Adult` text only for Wabbajack-classified NSFW lists, working official links, resilient accessible states, and a clearly unofficial identity using the approved supplied legible small-size mark.
+Both browser packages and their development archives build reproducibly, load without errors, and, on a known indexed Nexus mod page, show the exact matching list set with required blue counts, red `Adult` text only for Wabbajack-classified NSFW lists, working official links, resilient accessible states, and a clearly unofficial identity using the approved supplied legible small-size mark.
 
 ## Resolved Decisions
 

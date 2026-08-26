@@ -61,3 +61,5 @@ jobs:
             data/generated/public
             dist/chrome
             dist/firefox
+            artifacts/wabbajack-nexus-index-chrome-dev.zip
+            artifacts/wabbajack-nexus-index-firefox-dev.xpi

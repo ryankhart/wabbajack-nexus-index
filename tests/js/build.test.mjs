@@ -1,11 +1,24 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mkdtemp, mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import vm from "node:vm";
 
 import { buildExtension } from "../../scripts/build-extension.mjs";
+
+async function readTree(root) {
+  const entries = await readdir(root, { recursive: true, withFileTypes: true });
+  const files = new Map();
+  for (const entry of entries) {
+    if (!entry.isFile()) {
+      continue;
+    }
+    const absolutePath = path.join(entry.parentPath, entry.name);
+    files.set(path.relative(root, absolutePath).replaceAll(path.sep, "/"), await readFile(absolutePath));
+  }
+  return files;
+}
 
 test("builds permission-free Chrome and Firefox packages with bundled data", async (t) => {
   const root = await mkdtemp(path.join(os.tmpdir(), "wjni-build-"));
@@ -66,6 +79,10 @@ test("builds permission-free Chrome and Firefox packages with bundled data", asy
     assert.deepEqual(manifest.content_scripts[0].matches, [
       "https://www.nexusmods.com/*/mods/*",
       "https://next.nexusmods.com/*/mods/*",
+    ]);
+    assert.deepEqual(manifest.web_accessible_resources[0].matches, [
+      "https://www.nexusmods.com/*",
+      "https://next.nexusmods.com/*",
     ]);
     assert.deepEqual(manifest.content_scripts[0].js, ["core.global.js", "content.js"]);
     assert.ok(
@@ -140,4 +157,33 @@ test("builds permission-free Chrome and Firefox packages with bundled data", asy
     firefox.browser_specific_settings.gecko.id,
     "wabbajack-nexus-index@local"
   );
+
+  const [chromeFiles, firefoxFiles] = await Promise.all([
+    readTree(path.join(output, "chrome")),
+    readTree(path.join(output, "firefox")),
+  ]);
+  assert.deepEqual([...chromeFiles.keys()], [...firefoxFiles.keys()]);
+  for (const [relativePath, chromeContents] of chromeFiles) {
+    if (relativePath !== "manifest.json") {
+      assert.deepEqual(chromeContents, firefoxFiles.get(relativePath), relativePath);
+    }
+  }
+  const chrome = JSON.parse(chromeFiles.get("manifest.json"));
+  const normalizedFirefox = JSON.parse(firefoxFiles.get("manifest.json"));
+  delete normalizedFirefox.browser_specific_settings;
+  assert.deepEqual(chrome, normalizedFirefox);
+});
+
+test("canonical build packages Chrome and Firefox development artifacts", async () => {
+  const [packageJson, workflow] = await Promise.all([
+    readFile(new URL("../../package.json", import.meta.url)).then(JSON.parse),
+    readFile(new URL("../../.github/workflows/update-index.yml", import.meta.url), "utf8"),
+  ]);
+
+  assert.equal(
+    packageJson.scripts.build,
+    "node scripts/build-extension.mjs && python scripts/package_extensions.py"
+  );
+  assert.match(workflow, /artifacts\/wabbajack-nexus-index-chrome-dev\.zip/);
+  assert.match(workflow, /artifacts\/wabbajack-nexus-index-firefox-dev\.xpi/);
 });
