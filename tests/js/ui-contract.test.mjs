@@ -129,8 +129,9 @@ test("uses the bundled Wabbajack logo beside the inclusion heading", async () =>
   assert.doesNotMatch(content, /introIcon\.textContent = "◆"/);
   assert.match(
     css,
-    /\.wjni-intro-icon\s*\{[^}]*width:\s*20px;[^}]*height:\s*20px;[^}]*filter:\s*grayscale\(1\) invert\(1\) brightness\(0\.55\) contrast\(1\.2\);/s
+    /\.wjni-intro-icon\s*\{[^}]*width:\s*20px;[^}]*height:\s*20px;[^}]*filter:\s*grayscale\(1\) brightness\(2\.2\) contrast\(1\.15\);/s
   );
+  assert.doesNotMatch(css, /\.wjni-intro-icon\s*\{[^}]*invert\(/s);
 });
 
 test("uses Nexus translucent surfaces with color-mix fallbacks", async () => {
