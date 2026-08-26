@@ -2,6 +2,7 @@
   "name": "wabbajack-nexus-index",
   "version": "0.1.0",
   "private": true,
+  "license": "Apache-2.0",
   "description": "A reproducible all-game Wabbajack membership index and Nexus Mods browser extension.",
   "type": "module",
   "scripts": {

@@ -1,19 +1,15 @@
-# License Options
+# Licensing
 
-No license has been selected or granted yet.
+## Project license
 
-## Recommended default: Apache-2.0
+The original source code and documentation in this repository are licensed under the [Apache License 2.0](../LICENSE).
 
-Best fit if the goal is a broadly reusable open-source extension and ingestion pipeline. It is permissive and includes an explicit patent grant. Trade-off: downstream proprietary forks are allowed.
+Apache-2.0 supports broad reuse of the extension and ingestion pipeline, includes an explicit contributor patent grant, and requires preservation of license and attribution notices. Downstream proprietary forks are allowed.
 
-## Alternatives
+## Scope
 
-- **MIT** — shortest permissive license; simple, but without Apache-2.0's express patent language.
-- **MPL-2.0** — file-level copyleft; modifications to covered files must remain available while allowing combination with differently licensed files.
-- **GPL-3.0** — strong copyleft; derivative distributions must remain GPL-compatible. Wabbajack itself is GPL-licensed, but this independent implementation need not automatically use GPL unless GPL code is copied or linked.
+The Apache-2.0 grant covers original project code and documentation. It does not grant rights to third-party names, trademarks, logos, artwork, modlist content, or source metadata. Generated index records preserve source provenance and do not transfer rights held by Wabbajack, Nexus Mods, modlist authors, or other data providers.
 
-## Separate rights questions
+Wabbajack's own code and modlist artifacts retain their upstream licenses. This independent project does not copy or link Wabbajack code and does not redistribute `.wabbajack` installers or mod archives.
 
-A project code license does not grant rights to Nexus or Wabbajack trademarks, mod assets, list artwork, or third-party metadata beyond applicable terms. This project should use compatibility wording and avoid implying affiliation.
-
-Choose a license before public publication or accepting outside contributions.
+Product names are used only for compatibility and identification. This project is unofficial and does not imply affiliation with or endorsement by Wabbajack or Nexus Mods.

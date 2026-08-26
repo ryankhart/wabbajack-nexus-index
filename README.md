@@ -4,7 +4,7 @@ A local-first Chrome and Firefox extension plus reproducible data pipeline that 
 
 ## Status
 
-**Local verified development build available.** The complete current registered catalog is reconciled, recurring runs reuse unchanged verified manifests, and Chrome/Firefox packages build from the same generated dataset. GitHub Pages delivery is implemented but explicitly disabled until the public repository and Pages deployment are approved and configured. Browser-store release remains deferred.
+**Public source release under Apache-2.0.** The complete current registered catalog is reconciled, recurring runs reuse unchanged verified manifests, and Chrome/Firefox packages build from the same generated dataset. GitHub Pages delivery is implemented but remains explicitly disabled until Pages deployment is separately approved and configured. Browser-store release remains deferred.
 
 ## Product contract
 
@@ -64,4 +64,6 @@ See [docs/PROJECT_BRIEF.md](docs/PROJECT_BRIEF.md) and [docs/ARCHITECTURE.md](do
 
 ## License
 
-No project license has been granted yet. See [docs/LICENSE_OPTIONS.md](docs/LICENSE_OPTIONS.md).
+The original source code and documentation in this repository are licensed under the [Apache License 2.0](LICENSE).
+
+That license does not grant rights to third-party names, trademarks, logos, artwork, or source metadata. Wabbajack, Nexus Mods, modlist authors, and other data sources retain their respective rights. See [docs/LICENSE_OPTIONS.md](docs/LICENSE_OPTIONS.md) for the project-specific licensing boundary.
