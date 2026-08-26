@@ -31,15 +31,18 @@ test("mounts the Wabbajack body inside Nexus's native accordion list", async () 
   assert.match(content, /accordion\.append\(panel\)/);
 });
 
-test("shows four cards at full width without horizontal scrolling", async () => {
+test("shows four wide artwork cards at full width without horizontal scrolling", async () => {
   const [content, css] = await Promise.all([
     readFile(contentPath, "utf8"),
     readFile(cssPath, "utf8"),
   ]);
 
-  assert.match(content, /className = "wjni-card-icon"/);
-  assert.match(content, /textContent = "W"/);
-  assert.match(content, /className = "wjni-card-copy"/);
+  assert.match(content, /"wjni-card-artwork"/);
+  assert.match(content, /className = "wjni-card-image"/);
+  assert.match(content, /image\.src = row\.imageUrl/);
+  assert.match(content, /image\.loading = "lazy"/);
+  assert.match(content, /className = "wjni-title-overlay"/);
+  assert.match(content, /className = "wjni-card-footer"/);
   assert.match(content, /const PREVIEW_LIMIT = 4/);
   assert.match(css, /\.wjni-grid\s*\{[^}]*display:\s*grid;/s);
   assert.match(
@@ -72,16 +75,23 @@ test("matches Nexus collection cards and only labels adult modlists", async () =
   assert.doesNotMatch(content, /className = "wjni-separator"/);
   assert.match(
     css,
-    /\.wjni-card\s*\{[^}]*height:\s*56px;[^}]*padding:\s*8px;[^}]*background:\s*var\(--wjni-surface-translucent-mid\);[^}]*border:\s*0;[^}]*border-radius:\s*4px;/s
-  );
-  assert.match(css, /\.wjni-card-icon\s*\{[^}]*width:\s*40px;[^}]*height:\s*40px;/s);
-  assert.match(
-    css,
-    /\.wjni-title\s*\{[^}]*font-family:\s*"Inter"[^;]*;[^}]*font-size:\s*14px;[^}]*font-weight:\s*300 !important;[^}]*line-height:\s*20px;/s
+    /\.wjni-card\s*\{[^}]*overflow:\s*hidden;[^}]*background:\s*var\(--wjni-surface-translucent-mid\);[^}]*border:\s*0;[^}]*border-radius:\s*4px;/s
   );
   assert.match(
     css,
-    /\.wjni-mod-count\s*\{[^}]*font-size:\s*12px;[^}]*font-weight:\s*300;[^}]*line-height:\s*16px;/s
+    /\.wjni-card-artwork\s*\{[^}]*position:\s*relative;[^}]*aspect-ratio:\s*16 \/ 9;[^}]*overflow:\s*hidden;/s
+  );
+  assert.match(
+    css,
+    /\.wjni-card-image\s*\{[^}]*width:\s*100%;[^}]*height:\s*100%;[^}]*object-fit:\s*cover;/s
+  );
+  assert.match(
+    css,
+    /\.wjni-title-overlay\s*\{[^}]*position:\s*absolute;[^}]*left:\s*0;[^}]*bottom:\s*0;[^}]*width:\s*100%;[^}]*padding:/s
+  );
+  assert.match(
+    css,
+    /\.wjni-card-footer\s*\{[^}]*display:\s*flex;[^}]*align-items:\s*center;[^}]*padding:/s
   );
   assert.match(
     css,

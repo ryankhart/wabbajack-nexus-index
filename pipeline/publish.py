@@ -11,7 +11,7 @@ from collections import Counter, defaultdict
 from contextlib import closing
 from pathlib import Path
 from typing import Any
-from urllib.parse import quote
+from urllib.parse import quote, urlparse
 
 _GALLERY_URL = "https://www.wabbajack.org/#/modlists/gallery"
 _BUCKET_SIZE = 1000
@@ -36,6 +36,23 @@ def _classification(value: int | None) -> str:
     if value is None:
         return "UNKNOWN"
     return "NSFW" if value else "SFW"
+
+
+def _image_url(raw_json: str) -> str:
+    try:
+        payload = json.loads(raw_json)
+    except (TypeError, json.JSONDecodeError):
+        return ""
+    links = payload.get("links") if isinstance(payload, dict) else None
+    value = links.get("image") if isinstance(links, dict) else None
+    if not isinstance(value, str):
+        return ""
+    value = value.strip()
+    try:
+        parsed = urlparse(value)
+    except ValueError:
+        return ""
+    return value if parsed.scheme == "https" and parsed.netloc else ""
 
 
 def _failed_candidate_path(output: Path, generated_at: str) -> Path:
@@ -137,6 +154,7 @@ def publish_dataset(
                 "classification": _classification(row["nsfw"]),
                 "maintenance": bool(row["force_down"]),
                 "nexusModCount": row["nexus_mod_count"],
+                "imageUrl": _image_url(row["raw_json"]),
                 "wabbajackUrl": (
                     "https://www.wabbajack.org/modlist/"
                     f"{quote(row['repository_name'], safe='')}/"

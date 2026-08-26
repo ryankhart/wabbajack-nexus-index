@@ -30,6 +30,7 @@ class PublishDatasetTests(unittest.TestCase):
                     "machineURL": "Published",
                     "download": "https://cdn.example/published",
                     "readme": "https://example.invalid/readme",
+                    "image": "https://example.invalid/published.webp",
                 },
                 "download_metadata": {"Hash": "published=", "NumberOfArchives": 1},
             },
@@ -81,6 +82,10 @@ class PublishDatasetTests(unittest.TestCase):
         self.assertEqual({"42": ["fixture/Published"]}, bucket["mods"])
         self.assertEqual(1, modlists["fixture/Published"]["nexusModCount"])
         self.assertEqual("NSFW", modlists["fixture/Published"]["classification"])
+        self.assertEqual(
+            "https://example.invalid/published.webp",
+            modlists["fixture/Published"]["imageUrl"],
+        )
         self.assertEqual(
             "https://www.wabbajack.org/modlist/fixture/Published",
             modlists["fixture/Published"]["wabbajackUrl"],

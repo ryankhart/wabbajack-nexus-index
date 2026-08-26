@@ -87,6 +87,7 @@ export function createListRows(stableIds, modlists) {
       title,
       modCount,
       classification,
+      imageUrl: safeHttpsUrl(item.imageUrl),
       wabbajackUrl: safeHttpsUrl(item.wabbajackUrl),
       galleryUrl: safeHttpsUrl(item.galleryUrl),
       readmeUrl: safeHttpsUrl(item.readmeUrl),

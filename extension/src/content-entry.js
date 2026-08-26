@@ -200,21 +200,36 @@
       const card = document.createElement("article");
       card.className = "wjni-card";
 
-      const icon = document.createElement("span");
-      icon.className = "wjni-card-icon";
-      icon.setAttribute("aria-hidden", "true");
-      icon.textContent = "W";
-
-      const copy = document.createElement("div");
-      copy.className = "wjni-card-copy";
-
-      const name = makeLink(
+      const artwork = makeLink(
         row.wabbajackUrl || row.galleryUrl,
-        row.title,
-        "wjni-title"
+        "",
+        "wjni-card-artwork"
       );
-      name.setAttribute("aria-label", `${row.title} on the official Wabbajack site`);
+      artwork.setAttribute("aria-label", `${row.title} on the official Wabbajack site`);
+      if (row.imageUrl) {
+        const image = document.createElement("img");
+        image.className = "wjni-card-image";
+        image.src = row.imageUrl;
+        image.alt = "";
+        image.loading = "lazy";
+        image.decoding = "async";
+        image.referrerPolicy = "no-referrer";
+        image.addEventListener("error", () => {
+          image.remove();
+          card.classList.add("wjni-image-missing");
+        });
+        artwork.append(image);
+      } else {
+        card.classList.add("wjni-image-missing");
+      }
 
+      const titleOverlay = document.createElement("span");
+      titleOverlay.className = "wjni-title-overlay";
+      titleOverlay.textContent = row.title;
+      artwork.append(titleOverlay);
+
+      const footer = document.createElement("div");
+      footer.className = "wjni-card-footer";
       const facts = document.createElement("div");
       facts.className = "wjni-facts";
       const modCount = document.createElement("span");
@@ -229,8 +244,8 @@
         classification.setAttribute("aria-label", "Adult Wabbajack modlist");
         facts.append(classification);
       }
-      copy.append(name, facts);
-      card.append(icon, copy);
+      footer.append(facts);
+      card.append(artwork, footer);
       return card;
     }
 

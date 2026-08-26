@@ -7,7 +7,7 @@ Build a Chrome/Firefox extension and continually regenerated database that maps 
 ## Established facts
 
 - Wabbajack's public registry is rooted in `repositories.json`; each registered repository supplies one or more `modlists.json` records.[1][3]
-- Public metadata includes game, NSFW flag, official/unofficial status, version, list download URL, a repository-scoped machine URL, README URL, and archive counts.[2][3]
+- Public metadata includes game, NSFW flag, official/unofficial status, version, canonical 16:9 gallery artwork, list download URL, a repository-scoped machine URL, README URL, and archive counts.[2][3]
 - Wabbajack compilation preserves Nexus `gameName`, `modID`, and `fileID`, which makes exact identifier matching possible without title matching.[4]
 - Wabbajack CDN files are chunk-addressable through `definition.json.gz` and `/parts/{index}`, allowing selective reads of ZIP members instead of whole-installer downloads.[5]
 - The Nexus API acceptable-use policy disallows mass fetching intended to rehost Nexus information and requires public applications using the API to register; the extension therefore does not depend on Nexus API metadata.[7]
@@ -44,8 +44,8 @@ Private lists, paywalled lists, Discord attachments without stable public URLs, 
 
 - Detect supported Nexus mod pages from URL, not page title.
 - Insert one idempotent, accessible panel near the mod header/content area.
-- Show matching Wabbajack list names as native links.
-- Show each list's unique Nexus mod-page count in blue.
+- Show each matching list as a four-column artwork card using its canonical Wabbajack gallery image, with the linked title overlaid at the artwork's bottom-left.
+- Show each list's unique Nexus mod-page count in blue in a footer below the artwork.
 - Show `Adult` in red only for lists Wabbajack classifies as NSFW; show no classification label for non-NSFW lists and never infer it from individual mods.
 - Link to the official Wabbajack gallery and, when present, the list's author-maintained README.
 - Show a useful empty state and dataset freshness/coverage status.
