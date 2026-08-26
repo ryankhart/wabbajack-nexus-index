@@ -48,6 +48,7 @@ function manifestFor(target) {
         run_at: "document_idle",
       },
     ],
+    host_permissions: ["https://ryankhart.github.io/*"],
     web_accessible_resources: [
       {
         resources: ["assets/*.png", "data/*.json", "data/games/*/*.json"],
@@ -56,12 +57,15 @@ function manifestFor(target) {
     ],
   };
   if (target === "firefox") {
+    manifest.background = { scripts: ["background.js"] };
     manifest.browser_specific_settings = {
       gecko: {
         id: "wabbajack-nexus-index@local",
         strict_min_version: "109.0",
       },
     };
+  } else {
+    manifest.background = { service_worker: "background.js" };
   }
   return manifest;
 }
@@ -84,6 +88,7 @@ export async function buildExtension({ sourceDir, dataDir, outputRoot }) {
   const resolvedOutput = path.resolve(outputRoot);
   await Promise.all([
     requireFile(path.join(resolvedSource, "core.mjs")),
+    requireFile(path.join(resolvedSource, "background.js")),
     requireFile(path.join(resolvedSource, "content-entry.js")),
     requireFile(path.join(resolvedSource, "content.css")),
     requireFile(path.join(resolvedSource, "popup.html")),
@@ -96,8 +101,9 @@ export async function buildExtension({ sourceDir, dataDir, outputRoot }) {
     requireFile(path.join(resolvedData, "modlists.json")),
   ]);
 
-  const [core, content, css, popupHtml, popupScript, popupCss] = await Promise.all([
+  const [core, background, content, css, popupHtml, popupScript, popupCss] = await Promise.all([
     readFile(path.join(resolvedSource, "core.mjs"), "utf8"),
+    readFile(path.join(resolvedSource, "background.js"), "utf8"),
     readFile(path.join(resolvedSource, "content-entry.js"), "utf8"),
     readFile(path.join(resolvedSource, "content.css"), "utf8"),
     readFile(path.join(resolvedSource, "popup.html"), "utf8"),
@@ -108,9 +114,12 @@ export async function buildExtension({ sourceDir, dataDir, outputRoot }) {
 
   for (const target of ["chrome", "firefox"]) {
     const targetRoot = path.join(resolvedOutput, target);
+    const targetDataRoot = path.join(targetRoot, "data");
     await mkdir(targetRoot, { recursive: true });
+    await mkdir(targetDataRoot, { recursive: true });
     await Promise.all([
       writeFile(path.join(targetRoot, "core.global.js"), transformCore(core), "utf8"),
+      writeFile(path.join(targetRoot, "background.js"), background, "utf8"),
       writeFile(path.join(targetRoot, "content.js"), content, "utf8"),
       writeFile(path.join(targetRoot, "content.css"), css, "utf8"),
       writeFile(path.join(targetRoot, "popup.html"), popupHtml, "utf8"),
@@ -124,7 +133,17 @@ export async function buildExtension({ sourceDir, dataDir, outputRoot }) {
         `${JSON.stringify(manifestFor(target), null, 2)}\n`,
         "utf8"
       ),
-      cp(resolvedData, path.join(targetRoot, "data"), { recursive: true }),
+      cp(
+        path.join(resolvedData, "index-meta.json"),
+        path.join(targetDataRoot, "index-meta.json")
+      ),
+      cp(
+        path.join(resolvedData, "modlists.json"),
+        path.join(targetDataRoot, "modlists.json")
+      ),
+      cp(path.join(resolvedData, "games"), path.join(targetDataRoot, "games"), {
+        recursive: true,
+      }),
     ]);
   }
 }

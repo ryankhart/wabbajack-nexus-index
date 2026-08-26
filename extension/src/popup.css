@@ -66,6 +66,7 @@ body {
   line-height: 16px;
 }
 
+#index-source,
 #index-updated {
   color: #f4f4f5;
   font-size: 14px;
@@ -107,6 +108,7 @@ body {
     background: rgba(0, 0, 0, 0.04);
   }
 
+  #index-source,
   #index-updated {
     color: #18181b;
   }

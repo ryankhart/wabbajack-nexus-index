@@ -20,7 +20,7 @@ async function readTree(root) {
   return files;
 }
 
-test("builds permission-free Chrome and Firefox packages with bundled data", async (t) => {
+test("builds minimally permissioned Chrome and Firefox packages with remote fallback", async (t) => {
   const root = await mkdtemp(path.join(os.tmpdir(), "wjni-build-"));
   const data = path.join(root, "data");
   const output = path.join(root, "dist");
@@ -32,6 +32,10 @@ test("builds permission-free Chrome and Firefox packages with bundled data", asy
   );
   await writeFile(path.join(data, "index-meta.json"), JSON.stringify({ bucketSize: 1000 }));
   await writeFile(path.join(data, "modlists.json"), "{}");
+  await mkdir(path.join(data, "snapshots", "fixture"), { recursive: true });
+  await writeFile(path.join(data, "latest.json"), JSON.stringify({ snapshotId: "fixture" }));
+  await writeFile(path.join(data, "coverage.json"), JSON.stringify({ discovered: 1 }));
+  await writeFile(path.join(data, "snapshots", "fixture", "sentinel.json"), "{}");
   await Promise.all(
     gameDomains.map((gameDomain) =>
       writeFile(
@@ -61,7 +65,13 @@ test("builds permission-free Chrome and Firefox packages with bundled data", asy
       "https://github.com/ryankhart/wabbajack-nexus-index"
     );
     assert.deepEqual(manifest.permissions ?? [], []);
-    assert.deepEqual(manifest.host_permissions ?? [], []);
+    assert.deepEqual(manifest.host_permissions, ["https://ryankhart.github.io/*"]);
+    assert.deepEqual(
+      manifest.background,
+      target === "chrome"
+        ? { service_worker: "background.js" }
+        : { scripts: ["background.js"] }
+    );
     assert.deepEqual(manifest.action, {
       default_icon: {
         16: "assets/icon-16.png",
@@ -123,6 +133,21 @@ test("builds permission-free Chrome and Firefox packages with bundled data", asy
       JSON.parse(await readFile(path.join(targetRoot, "data", "index-meta.json"))).bucketSize,
       1000
     );
+    await assert.rejects(
+      readFile(path.join(targetRoot, "data", "latest.json")),
+      /ENOENT/,
+      "the package must not include the hosting pointer"
+    );
+    await assert.rejects(
+      readFile(path.join(targetRoot, "data", "coverage.json")),
+      /ENOENT/,
+      "the package must not include operator-only coverage data"
+    );
+    await assert.rejects(
+      readFile(path.join(targetRoot, "data", "snapshots", "fixture", "sentinel.json")),
+      /ENOENT/,
+      "the package must not duplicate immutable hosting snapshots"
+    );
     for (const gameDomain of gameDomains) {
       assert.equal(
         JSON.parse(
@@ -134,8 +159,14 @@ test("builds permission-free Chrome and Firefox packages with bundled data", asy
     assert.match(await readFile(path.join(targetRoot, "popup.html"), "utf8"), /popup\.js/);
     assert.match(
       await readFile(path.join(targetRoot, "popup.js"), "utf8"),
-      /data\/index-meta\.json/
+      /wjni:status/
     );
+    const background = await readFile(path.join(targetRoot, "background.js"), "utf8");
+    assert.match(
+      background,
+      /https:\/\/ryankhart\.github\.io\/wabbajack-nexus-index/
+    );
+    assert.doesNotMatch(background, /\beval\(|\bFunction\(/);
     assert.match(await readFile(path.join(targetRoot, "popup.css"), "utf8"), /\.popup/);
     const core = await readFile(path.join(targetRoot, "core.global.js"), "utf8");
     assert.doesNotMatch(core, /export function/);
@@ -170,6 +201,8 @@ test("builds permission-free Chrome and Firefox packages with bundled data", asy
   }
   const chrome = JSON.parse(chromeFiles.get("manifest.json"));
   const normalizedFirefox = JSON.parse(firefoxFiles.get("manifest.json"));
+  delete chrome.background;
+  delete normalizedFirefox.background;
   delete normalizedFirefox.browser_specific_settings;
   assert.deepEqual(chrome, normalizedFirefox);
 });

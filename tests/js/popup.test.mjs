@@ -6,7 +6,7 @@ const popupHtmlPath = new URL("../../extension/src/popup.html", import.meta.url)
 const popupJsPath = new URL("../../extension/src/popup.js", import.meta.url);
 const popupCssPath = new URL("../../extension/src/popup.css", import.meta.url);
 
-test("shows bundled index freshness only in the toolbar popup", async () => {
+test("shows active index freshness and provenance in the toolbar popup", async () => {
   const [html, script, css] = await Promise.all([
     readFile(popupHtmlPath, "utf8"),
     readFile(popupJsPath, "utf8"),
@@ -17,13 +17,15 @@ test("shows bundled index freshness only in the toolbar popup", async () => {
   assert.match(html, /<script src="popup\.js" defer><\/script>/);
   assert.match(html, /<main class="popup"/);
   assert.match(html, /<time id="index-updated"/);
+  assert.match(html, /<span id="index-source"/);
   assert.match(html, /role="status"/);
 
-  assert.match(script, /fetch\("data\/index-meta\.json", \{ cache: "no-store" \}\)/);
-  assert.match(script, /metadata\.generatedAt/);
+  assert.match(script, /type:\s*"wjni:status"/);
+  assert.match(script, /GitHub Pages/);
+  assert.match(script, /Bundled fallback/);
   assert.match(script, /freshness\.dateTime = generatedAt/);
   assert.match(script, /Intl\.DateTimeFormat/);
-  assert.match(script, /Unable to read bundled index metadata/);
+  assert.match(script, /Unable to read index metadata/);
 
   assert.match(css, /\.popup\s*\{/);
   assert.match(css, /@media \(prefers-color-scheme: light\)/);

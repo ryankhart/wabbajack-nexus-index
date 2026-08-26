@@ -4,7 +4,7 @@ A local-first Chrome and Firefox extension plus reproducible data pipeline that 
 
 ## Status
 
-**Local verified development build available.** The complete current registered catalog is reconciled, recurring runs reuse unchanged verified manifests, and Chrome/Firefox packages build from the same generated dataset. Browser-store release and public hosting remain intentionally deferred.
+**Local verified development build available.** The complete current registered catalog is reconciled, recurring runs reuse unchanged verified manifests, and Chrome/Firefox packages build from the same generated dataset. GitHub Pages delivery is implemented but explicitly disabled until the public repository and Pages deployment are approved and configured. Browser-store release remains deferred.
 
 ## Product contract
 
@@ -13,7 +13,7 @@ On a supported Nexus Mods mod page, the extension inserts a Wabbajack panel cont
 - canonical 16:9 Wabbajack gallery artwork with the linked modlist title overlaid at bottom-left;
 - unique Nexus mod-page count in blue text below the artwork;
 - an `Adult` label in red text only when Wabbajack classifies the list as NSFW;
-- generated-index timestamp for data freshness.
+- generated-index timestamp and active data source for freshness/provenance.
 
 The pipeline indexes every registered Wabbajack list and the extension supports every authoritative Nexus game domain published from those manifests.
 
@@ -39,6 +39,14 @@ Build:        npm run build
 Full verify:  npm run verify
 Index:        python -m pipeline build --workers 6
 ```
+
+## Dataset hosting
+
+The extension packages a verified snapshot and prefers a newer validated snapshot from `https://ryankhart.github.io/wabbajack-nexus-index/` when available. Remote JSON is fetched by the extension background context; malformed, incompatible, unavailable, or inconsistent remote data falls back to the packaged snapshot. No remote code is loaded or executed.
+
+Valid publications contain root JSON for package compatibility, `latest.json`, and immutable `snapshots/<sha256>/` trees retaining the current and immediately previous snapshots. The scheduled workflow builds and verifies every candidate, but Pages upload and deployment remain inert unless the repository variable `ENABLE_PAGES_DEPLOYMENT` is exactly `true`.
+
+The Pages artifact contains only `data/generated/public`. SQLite and acquisition caches remain local; the large database/package diagnostic archive is limited to manual workflow runs with seven-day retention. A future SQLite research download belongs in a GitHub Release rather than Pages or Git history.
 
 ## Local browser testing
 

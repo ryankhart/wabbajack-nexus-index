@@ -5,8 +5,9 @@
 | `registry-ingestion` | Enumerate Wabbajack sources, extract every current registered manifest, normalize exact Nexus identities, and reconcile coverage | — |
 | `dataset-publication` | Preserve indexed history and emit deterministic, validated lookup artifacts with provenance and freshness | `registry-ingestion` |
 | `extension-surface` | Detect Nexus mod pages and render the matching Wabbajack lists in a resilient Chrome/Firefox UI | `dataset-publication` |
+| `github-hosting` | Deliver immutable validated JSON snapshots through explicitly gated GitHub Pages deployment with packaged fallback | `dataset-publication`, `extension-surface` |
 
-Build order: `registry-ingestion` → `dataset-publication` → `extension-surface`.
+Build order: `registry-ingestion` → `dataset-publication` → `extension-surface` → `github-hosting`.
 
 ## Boundary contracts
 
@@ -30,6 +31,13 @@ Build order: `registry-ingestion` → `dataset-publication` → `extension-surfa
 - only published schema-versioned artifacts;
 - no Nexus API key and no mod title matching;
 - no executable remote code.
+
+### `github-hosting` provides
+
+- a content-addressed current snapshot and immediately previous snapshot;
+- a small validated pointer for remote extension clients;
+- an explicit repository-variable publication gate;
+- Pages deployment only after the complete canonical verification gate.
 
 ## Scope validation
 

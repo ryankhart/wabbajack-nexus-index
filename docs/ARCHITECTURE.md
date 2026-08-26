@@ -11,7 +11,9 @@ Wabbajack registry
   -> NexusDownloader normalization
   -> SQLite working database
   -> deterministic JSON lookup shards + coverage report
-  -> Chrome/Firefox content script panel
+  -> immutable GitHub Pages snapshot (when explicitly enabled)
+  -> Chrome/Firefox background data transport
+  -> content script panel
 ```
 
 ## 1. Discovery layer
@@ -70,18 +72,29 @@ The deterministic build emits:
 - `games/<domain>/<bucket>.json` — lookup records bucketed by mod ID to bound request size.
 - `modlists.json` — compact list metadata keyed by stable list ID.
 - `coverage.json` — every discovered list and its terminal indexing state.
-- `database.sqlite` — optional downloadable research artifact, not required by the extension.
+- `latest.json` — small pointer to the current content-addressed snapshot.
+- `snapshots/<sha256>/...` — immutable copies of the current and immediately previous public projection.
+- `database.sqlite` — optional future GitHub Release research artifact, never required by the extension or included in Pages.
 
-Artifacts are sorted, minified deterministically, hashed, and written atomically. A failed or partial run never replaces the last known-good published snapshot.
+Artifacts are sorted, minified deterministically, hashed, and written atomically. The snapshot ID is the SHA-256 of `index-meta.json`, whose artifact map binds the remaining projection. A failed or partial run never replaces the last-known-good root, pointer, or immutable snapshots.
 
 ## 6. Extension runtime
+
+The extension background context:
+
+1. checks the GitHub Pages `latest.json` pointer with a bounded request;
+2. validates pointer syntax, schema version, generation time, bucket manifest, requested game/bucket identity, and membership references;
+3. fetches only immutable metadata, global modlist metadata, and the one required lookup bucket;
+4. treats a valid remote empty result as authoritative;
+5. retries malformed, unavailable, inconsistent, or incompatible remote data against the packaged snapshot;
+6. returns data only and never loads remote executable content.
 
 The content script:
 
 1. matches supported Nexus URL shapes;
 2. parses the game domain and mod ID from `location.pathname`;
 3. mounts a namespaced panel idempotently without nesting controls inside existing links;
-4. loads metadata, the one required bucket, and referenced list records;
+4. requests the exact lookup from the extension background context;
 5. renders with DOM APIs and `textContent` only;
 6. observes SPA navigation and remounts on identity change;
 7. leaves the Nexus page usable on timeout, schema mismatch, or missing data.
@@ -90,14 +103,18 @@ Links are native `<a>` elements with `target="_blank"` and `rel="noopener norefe
 
 ## 7. Continual update contract
 
-A scheduled job may run every six hours after publication is configured. It:
+A scheduled job runs every four hours. It:
 
 - conditional-fetches source metadata;
 - reuses unchanged manifest snapshots by download hash/version;
 - indexes new or changed lists with bounded parallelism and retry/backoff;
 - records failures without deleting last-known-good memberships;
 - performs reconciliation and schema validation;
-- publishes only if the run is complete for its declared source universe.
+- uploads a Pages artifact only after `npm run verify` succeeds;
+- deploys only when repository variable `ENABLE_PAGES_DEPLOYMENT` is exactly `true`;
+- otherwise retains build diagnostics without any publication side effect.
+
+The Pages build uses GitHub's official artifact/deployment actions and a separate least-privilege deployment job.[7] Failed builds cannot replace the active Pages deployment.
 
 The official Wabbajack registry validation itself runs regularly, but this project independently records its own fetch and manifest status.[3]
 
@@ -109,6 +126,8 @@ The official Wabbajack registry validation itself runs regularly, but this proje
 - No `innerHTML` with external data.
 - No browsing-history collection or telemetry in v1.
 - Host permissions limited to Nexus page matches and the configured static dataset origin.
+- Remote data origin limited to `https://ryankhart.github.io/*`.
+- Pages contains the compact public JSON projection only, never SQLite or acquisition caches.
 - Mod archives and installer patch blobs are not persisted in generated artifacts.
 
 ## Sources
@@ -118,3 +137,4 @@ The official Wabbajack registry validation itself runs regularly, but this proje
 [3] https://wiki.wabbajack.org/wabbajack_cdn_and_gallery_access/Adding%20a%20Custom%20Repository%20to%20Wabbajack.html
 [5] https://raw.githubusercontent.com/wabbajack-tools/wabbajack/main/Wabbajack.Downloaders.WabbajackCDN/WabbajackCDNDownloader.cs
 [6] https://github.com/wabbajack-tools/wabbajack/blob/af938fb980bb4bcd1f6c87542fae6cd34b5020ee/Wabbajack.DTOs/Game/GameRegistry.cs
+[7] https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages

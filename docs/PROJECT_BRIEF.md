@@ -59,9 +59,11 @@ Private lists, paywalled lists, Discord attachments without stable public URLs, 
 - Inferring NSFW status from mod content.
 - Publishing a browser-store listing or public repository without explicit approval.
 
-## Main unresolved product decision
+## Dataset delivery decision
 
-The long-lived public dataset host is not selected. The local build will bundle a verified snapshot and support an optional remote dataset base URL; publication and store distribution remain separate approval-gated work.
+GitHub Pages is the selected v1 host for the compact public JSON projection. Chrome and Firefox packages retain a verified bundled snapshot, prefer validated immutable Pages snapshots through a background transport, and fall back locally on any remote failure. The Pages workflow is implemented but cannot deploy unless repository variable `ENABLE_PAGES_DEPLOYMENT=true` is deliberately configured.
+
+The full SQLite working database and acquisition cache are not browser runtime artifacts and are never uploaded to Pages. A future SQLite research download may use a GitHub Release. Creating the public remote, choosing the public account identity, granting a license, enabling Pages, setting the deployment variable, pushing, and browser-store distribution remain separate approval-gated decisions.
 
 ## Sources
 

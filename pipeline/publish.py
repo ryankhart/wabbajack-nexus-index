@@ -79,6 +79,22 @@ def _available_backup_path(output: Path) -> Path:
     return candidate
 
 
+def _previous_snapshot(output: Path) -> tuple[str, Path] | None:
+    try:
+        pointer = json.loads((output / "latest.json").read_text("utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError):
+        return None
+    snapshot_id = pointer.get("snapshotId") if isinstance(pointer, dict) else None
+    if not (
+        isinstance(snapshot_id, str)
+        and len(snapshot_id) == 64
+        and all(character in "0123456789abcdef" for character in snapshot_id)
+    ):
+        return None
+    snapshot_root = output / "snapshots" / snapshot_id
+    return (snapshot_id, snapshot_root) if snapshot_root.is_dir() else None
+
+
 def _replace_with_retry(source: Path, destination: Path) -> None:
     for attempt in range(5):
         try:
@@ -251,6 +267,30 @@ def publish_dataset(
         stable_ids = set(modlists)
         if any(row["stable_id"] not in stable_ids for row in membership_rows):
             raise ValueError("publication membership references an unknown list")
+
+        index_metadata_bytes = (temporary / "index-meta.json").read_bytes()
+        snapshot_id = hashlib.sha256(index_metadata_bytes).hexdigest()
+        snapshot_root = temporary / "snapshots" / snapshot_id
+        for relative_path in ["index-meta.json", *artifact_hashes]:
+            source = temporary / relative_path
+            destination = snapshot_root / relative_path
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(source, destination)
+        previous_snapshot = _previous_snapshot(output)
+        if previous_snapshot is not None and previous_snapshot[0] != snapshot_id:
+            shutil.copytree(
+                previous_snapshot[1],
+                temporary / "snapshots" / previous_snapshot[0],
+            )
+        _write_json(
+            temporary,
+            "latest.json",
+            {
+                "schemaVersion": 1,
+                "snapshotId": snapshot_id,
+                "generatedAt": generated_at,
+            },
+        )
 
         if backup.exists():
             try:

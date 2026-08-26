@@ -150,7 +150,7 @@
     body.dataset.role = "body";
     body.setAttribute("aria-live", "polite");
     body.setAttribute("aria-busy", "true");
-    body.textContent = "Looking up this mod in the bundled Wabbajack index…";
+    body.textContent = "Looking up this mod in the Wabbajack index…";
     button.setAttribute("aria-controls", body.id);
     button.addEventListener("click", () => {
       const expanded = button.getAttribute("aria-expanded") === "true";
@@ -284,32 +284,41 @@
     body.append(collectionShell);
   }
 
-  async function fetchJson(relativePath) {
-    const response = await fetch(runtime.getURL(relativePath), { cache: "no-store" });
-    if (!response.ok) {
-      throw new Error(`Bundled index request failed: ${response.status}`);
+  function requestLookup(identity) {
+    const message = {
+      type: "wjni:lookup",
+      gameDomain: identity.gameDomain,
+      modId: identity.modId,
+    };
+    if (globalThis.browser?.runtime?.sendMessage) {
+      return globalThis.browser.runtime.sendMessage(message);
     }
-    return response.json();
+    return new Promise((resolve, reject) => {
+      runtime.sendMessage(message, (response) => {
+        if (runtime.lastError) {
+          reject(new Error(runtime.lastError.message));
+        } else {
+          resolve(response);
+        }
+      });
+    });
   }
 
-  const loadMetadata = api.createRetryableLoader(() => fetchJson("data/index-meta.json"));
-  const loadModlists = api.createRetryableLoader(() => fetchJson("data/modlists.json"));
-
   async function lookup(identity) {
-    const metadata = await loadMetadata();
-    const bucketSize = metadata.bucketSize;
-    const bucket = api.bucketForMod(identity.modId, bucketSize);
-    const availableBuckets = metadata.buckets?.[identity.gameDomain] || [];
-    if (!availableBuckets.includes(bucket)) {
-      return { rows: [] };
+    const response = await requestLookup(identity);
+    if (!response?.ok) {
+      throw new Error(response?.error || "Index lookup failed");
     }
-    const [modlists, lookupBucket] = await Promise.all([
-      loadModlists(),
-      fetchJson(`data/games/${identity.gameDomain}/${bucket}.json`),
-    ]);
-    const stableIds = lookupBucket.mods?.[String(identity.modId)] || [];
+    if (
+      !Array.isArray(response.stableIds) ||
+      !response.modlists ||
+      typeof response.modlists !== "object" ||
+      Array.isArray(response.modlists)
+    ) {
+      throw new TypeError("Index lookup response is invalid");
+    }
     return {
-      rows: api.createListRows(stableIds, modlists),
+      rows: api.createListRows(response.stableIds, response.modlists),
     };
   }
 
@@ -362,7 +371,7 @@
         console.warn("Unofficial Wabbajack-Nexus Index lookup failed", error);
         renderMessage(
           panel,
-          "The bundled Wabbajack index could not be read. Reload the page or update the extension.",
+          "The Wabbajack index could not be read. Reload the page or update the extension.",
           "error"
         );
       }

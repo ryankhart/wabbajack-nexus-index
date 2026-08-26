@@ -78,6 +78,16 @@ class PublishDatasetTests(unittest.TestCase):
             modlists = json.loads((output_path / "modlists.json").read_text("utf-8"))
             coverage = json.loads((output_path / "coverage.json").read_text("utf-8"))
             metadata = json.loads((output_path / "index-meta.json").read_text("utf-8"))
+            latest = json.loads((output_path / "latest.json").read_text("utf-8"))
+            root_artifacts = {
+                relative_path: (output_path / relative_path).read_bytes()
+                for relative_path in ["index-meta.json", *metadata["artifacts"]]
+            }
+            snapshot_root = output_path / "snapshots" / latest["snapshotId"]
+            snapshot_artifacts = {
+                relative_path: (snapshot_root / relative_path).read_bytes()
+                for relative_path in root_artifacts
+            }
 
         self.assertEqual({"42": ["fixture/Published"]}, bucket["mods"])
         self.assertEqual(1, modlists["fixture/Published"]["nexusModCount"])
@@ -114,6 +124,13 @@ class PublishDatasetTests(unittest.TestCase):
         )
         shard_hash = metadata["artifacts"]["games/skyrimspecialedition/0.json"]
         self.assertEqual(64, len(shard_hash))
+        self.assertEqual(1, latest["schemaVersion"])
+        self.assertEqual("2026-08-25T00:00:00Z", latest["generatedAt"])
+        self.assertEqual(
+            hashlib.sha256(root_artifacts["index-meta.json"]).hexdigest(),
+            latest["snapshotId"],
+        )
+        self.assertEqual(root_artifacts, snapshot_artifacts)
 
     def test_rejects_unreconciled_candidate_and_preserves_last_known_good(self):
         record = normalize_repository_payload(
@@ -205,6 +222,9 @@ class PublishDatasetTests(unittest.TestCase):
                 output_path,
                 generated_at="2026-08-25T00:00:00Z",
             )
+            first_snapshot_id = json.loads(
+                (output_path / "latest.json").read_text("utf-8")
+            )["snapshotId"]
 
             real_rmtree = shutil.rmtree
 
@@ -219,6 +239,9 @@ class PublishDatasetTests(unittest.TestCase):
                     output_path,
                     generated_at="2026-08-26T00:00:00Z",
                 )
+                second_snapshot_id = json.loads(
+                    (output_path / "latest.json").read_text("utf-8")
+                )["snapshotId"]
                 publish_dataset(
                     database_path,
                     output_path,
@@ -229,9 +252,22 @@ class PublishDatasetTests(unittest.TestCase):
                 (output_path / "index-meta.json").read_text("utf-8")
             )
             backup_exists = output_path.with_name("published.previous").exists()
+            retained_snapshot_ids = {
+                path.name
+                for path in (output_path / "snapshots").iterdir()
+                if path.is_dir()
+            }
+            current_snapshot_id = json.loads(
+                (output_path / "latest.json").read_text("utf-8")
+            )["snapshotId"]
 
         self.assertEqual("2026-08-27T00:00:00Z", metadata["generatedAt"])
         self.assertTrue(backup_exists)
+        self.assertNotIn(first_snapshot_id, retained_snapshot_ids)
+        self.assertEqual(
+            {second_snapshot_id, current_snapshot_id},
+            retained_snapshot_ids,
+        )
 
     def test_retries_a_transient_windows_directory_replace_failure(self):
         record = normalize_repository_payload(

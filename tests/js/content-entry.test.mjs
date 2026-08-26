@@ -214,7 +214,7 @@ class FakeDocument {
   }
 }
 
-async function runContentScript(fetchFixture) {
+async function runContentScript(lookupFixture) {
   const source = await readFile(contentPath, "utf8");
   const document = new FakeDocument();
   const timers = [];
@@ -239,13 +239,19 @@ async function runContentScript(fetchFixture) {
     chrome: {
       runtime: {
         getURL: (path) => `extension://fixture/${path}`,
+        sendMessage: (message, callback) => {
+          Promise.resolve(lookupFixture(message)).then(callback);
+        },
+        lastError: null,
       },
     },
     console: {
       warn: (...args) => warnings.push(args),
     },
     document,
-    fetch: async (url) => fetchFixture(url),
+    fetch: async () => {
+      throw new Error("content scripts must not fetch index data directly");
+    },
     location: {
       href: "https://www.nexusmods.com/skyrimspecialedition/mods/42",
     },
@@ -271,20 +277,20 @@ async function runContentScript(fetchFixture) {
   };
 }
 
-function jsonResponse(value) {
-  return {
-    ok: true,
-    json: async () => value,
-  };
-}
-
 test("omits the section and suppresses same-route remounts for a confirmed empty bucket", async () => {
-  const page = await runContentScript(async (url) => {
-    assert.match(url, /data\/index-meta\.json$/);
-    return jsonResponse({
-      bucketSize: 1000,
-      buckets: { skyrimspecialedition: [] },
+  const page = await runContentScript(async (message) => {
+    assert.deepEqual(JSON.parse(JSON.stringify(message)), {
+      type: "wjni:lookup",
+      gameDomain: "skyrimspecialedition",
+      modId: 42,
     });
+    return {
+      ok: true,
+      source: "remote",
+      generatedAt: "2026-08-26T12:00:00Z",
+      stableIds: [],
+      modlists: {},
+    };
   });
 
   assert.equal(page.getPanel(), null);
@@ -302,18 +308,10 @@ test("omits the section and suppresses same-route remounts for a confirmed empty
 });
 
 test("keeps the section visible when an advertised bucket cannot be read", async () => {
-  const page = await runContentScript(async (url) => {
-    if (url.endsWith("data/index-meta.json")) {
-      return jsonResponse({
-        bucketSize: 1000,
-        buckets: { skyrimspecialedition: [0] },
-      });
-    }
-    if (url.endsWith("data/modlists.json")) {
-      return jsonResponse({});
-    }
-    return { ok: false, status: 404 };
-  });
+  const page = await runContentScript(async () => ({
+    ok: false,
+    error: "Remote and bundled index lookups failed",
+  }));
 
   const panel = page.getPanel();
   assert.ok(panel, "lookup failures must keep the Wabbajack section mounted");
