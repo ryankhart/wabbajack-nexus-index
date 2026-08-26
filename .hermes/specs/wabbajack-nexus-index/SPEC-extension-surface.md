@@ -69,12 +69,22 @@ DOM selectors remain adapter details and must be discovered/verified against the
 - AC-EXT-027: The package uses the approved supplied transparent Wabbajack-inspired mark at 16, 32, 48, and 128 pixels for browser and in-product identity; popup and panel CSS render the visible artwork white.
 - AC-EXT-028: The supplied silhouette remains recognizable and unclipped at the 16-pixel browser size and the 20/34-pixel in-product sizes, with sufficient contrast on light and dark surroundings.
 
+### REQ-EXT-008: Link Wabbajack archive-search results to exact Nexus pages
+
+- AC-EXT-029: Given a canonical Wabbajack per-modlist archive-search URL `/search/<repository>/<machine-id>`, then the extension loads that list's published status report and enhances currently rendered archive cards without altering search, sorting, or virtualization behavior.
+- AC-EXT-030: Given an archive whose Wabbajack state uses an authoritative Nexus downloader type and contains a recognized Nexus game plus positive integer mod and file IDs, then the displayed mod name becomes a real anchor to `https://www.nexusmods.com/<game-domain>/mods/<mod-id>` and the archive filename becomes a real anchor to the exact Nexus file page `?tab=files&file_id=<file-id>`.
+- AC-EXT-031: Given a non-Nexus archive, unknown game, malformed/missing identifier, ambiguous duplicate archive filename, or unrelated Wabbajack route, then the extension leaves that result unchanged and never falls back to title, filename, or Nexus search matching.
+- AC-EXT-032: Given virtualized rows that mount, unmount, or are recycled while scrolling/filtering, then every currently rendered eligible row is enhanced idempotently, with no nested duplicate links.
+- AC-EXT-033: Added links are real anchors with `target="_blank"` and `rel="noopener noreferrer"`, preserving middle-click and context-menu behavior while retaining the archive card's existing visual hierarchy.
+
 ## Non-Goals
 
 - Installing a modlist from the extension in v1.
 - Replacing Nexus's collection UI.
 - Using a floating overlay when an in-flow description-page anchor exists.
 - Collecting browsing history or analytics.
+- Fuzzy Nexus search links or any inference from archive/mod titles and filenames.
+- Bypassing Nexus authentication, membership, archived-file, or normal download-flow requirements.
 
 ## Tech Stack
 
@@ -108,6 +118,7 @@ Pure tests cover URL parsing, projection, ordering, and safe DOM construction. S
 | AC-EXT-017–019, AC-EXT-029 | manifest/build and archive parity validation | EXT-T5, EXT-T8 |
 | AC-EXT-020–023 | accessibility + browser geometry/screenshots | EXT-T6 |
 | AC-EXT-024–028 | manifest/build tests + raster dimension checks + small-size screenshots | EXT-T7 |
+| AC-EXT-029–033 | URL/state projection tests + virtualized DOM enhancement tests + live Wabbajack page | EXT-T8 |
 
 ## Success Criteria
 

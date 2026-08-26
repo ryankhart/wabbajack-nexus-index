@@ -3,9 +3,11 @@ import assert from "node:assert/strict";
 
 import {
   bucketForMod,
+  createNexusArchiveLinks,
   createRetryableLoader,
   createListRows,
   parseNexusModUrl,
+  parseWabbajackArchiveSearchUrl,
 } from "../../extension/src/core.mjs";
 
 test("parses canonical Nexus mod identity and ignores query/hash", () => {
@@ -39,6 +41,79 @@ test("rejects non-detail pages, non-Nexus hosts, and malformed IDs", () => {
     "not a url",
   ]) {
     assert.equal(parseNexusModUrl(url), null, url);
+  }
+});
+
+test("parses only canonical per-modlist Wabbajack archive-search routes", () => {
+  assert.deepEqual(
+    parseWabbajackArchiveSearchUrl(
+      "https://www.wabbajack.org/search/wj-featured/tpf?ignored=true#results"
+    ),
+    {
+      repository: "wj-featured",
+      machineId: "tpf",
+      statusUrl:
+        "https://raw.githubusercontent.com/wabbajack-tools/mod-lists/master/reports/wj-featured/tpf/status.json",
+    }
+  );
+
+  for (const url of [
+    "https://www.wabbajack.org/search/global",
+    "https://www.wabbajack.org/gallery",
+    "https://wabbajack.org/search/wj-featured/tpf",
+    "https://example.com/search/wj-featured/tpf",
+    "not a url",
+  ]) {
+    assert.equal(parseWabbajackArchiveSearchUrl(url), null, url);
+  }
+});
+
+test("projects exact Wabbajack Nexus IDs to mod and file pages", () => {
+  assert.deepEqual(
+    createNexusArchiveLinks({
+      $type: "NexusDownloader, Wabbajack.Lib",
+      GameName: "SkyrimSpecialEdition",
+      ModID: 21916,
+      FileID: 75329,
+      Name: "A Lovely Letter Alternate Routes",
+    }),
+    {
+      gameDomain: "skyrimspecialedition",
+      modId: 21916,
+      fileId: 75329,
+      modUrl: "https://www.nexusmods.com/skyrimspecialedition/mods/21916",
+      fileUrl:
+        "https://www.nexusmods.com/skyrimspecialedition/mods/21916?tab=files&file_id=75329",
+    }
+  );
+});
+
+test("normalizes authoritative game aliases and rejects inferred Nexus identities", () => {
+  for (const [game, expectedDomain] of [
+    ["SkyrimVR", "skyrimspecialedition"],
+    ["FalloutNewVegas", "newvegas"],
+    ["SevenDaysToDie", "7daystodie"],
+    ["BaldursGate3", "baldursgate3"],
+  ]) {
+    assert.equal(
+      createNexusArchiveLinks({
+        $type: "Nexus",
+        Game: game,
+        ModId: 42,
+        FileId: 100,
+      }).gameDomain,
+      expectedDomain
+    );
+  }
+
+  for (const state of [
+    { $type: "HttpDownloader", GameName: "SkyrimSpecialEdition", ModID: 42, FileID: 100 },
+    { $type: "Nexus", Game: "UnknownGame", ModID: 42, FileID: 100 },
+    { $type: "Nexus", Game: "SkyrimSpecialEdition", ModID: 0, FileID: 100 },
+    { $type: "Nexus", Game: "SkyrimSpecialEdition", ModID: 42, FileID: "100" },
+    { Name: "Filename-42-100.zip" },
+  ]) {
+    assert.equal(createNexusArchiveLinks(state), null);
   }
 });
 

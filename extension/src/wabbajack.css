@@ -1,0 +1,17 @@
+.wjni-archive-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.wjni-archive-link:hover,
+.wjni-archive-link:focus-visible {
+  text-decoration: underline;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.16em;
+}
+
+.wjni-archive-link:focus-visible {
+  border-radius: 0.125rem;
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}

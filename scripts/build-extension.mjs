@@ -17,6 +17,7 @@ const RESOURCE_MATCHES = [
   "https://www.nexusmods.com/*",
   "https://next.nexusmods.com/*",
 ];
+const WABBAJACK_MATCHES = ["https://www.wabbajack.org/search/*"];
 
 function manifestFor(target) {
   const manifest = {
@@ -47,6 +48,12 @@ function manifestFor(target) {
         css: ["content.css"],
         run_at: "document_idle",
       },
+      {
+        matches: WABBAJACK_MATCHES,
+        js: ["core.global.js", "wabbajack.js"],
+        css: ["wabbajack.css"],
+        run_at: "document_idle",
+      },
     ],
     host_permissions: ["https://ryankhart.github.io/*"],
     web_accessible_resources: [
@@ -61,7 +68,10 @@ function manifestFor(target) {
     manifest.browser_specific_settings = {
       gecko: {
         id: "wabbajack-nexus-index@local",
-        strict_min_version: "109.0",
+        strict_min_version: "142.0",
+        data_collection_permissions: {
+          required: ["none"],
+        },
       },
     };
   } else {
@@ -79,7 +89,7 @@ async function requireFile(filePath) {
 
 function transformCore(source) {
   const script = source.replace(/^export\s+/gm, "");
-  return `${script}\n\nglobalThis.WJNI = Object.freeze({\n  parseNexusModUrl,\n  bucketForMod,\n  createRetryableLoader,\n  createListRows,\n});\n`;
+  return `${script}\n\nglobalThis.WJNI = Object.freeze({\n  parseNexusModUrl,\n  parseWabbajackArchiveSearchUrl,\n  createNexusArchiveLinks,\n  bucketForMod,\n  createRetryableLoader,\n  createListRows,\n});\n`;
 }
 
 export async function buildExtension({ sourceDir, dataDir, outputRoot }) {
@@ -91,6 +101,8 @@ export async function buildExtension({ sourceDir, dataDir, outputRoot }) {
     requireFile(path.join(resolvedSource, "background.js")),
     requireFile(path.join(resolvedSource, "content-entry.js")),
     requireFile(path.join(resolvedSource, "content.css")),
+    requireFile(path.join(resolvedSource, "wabbajack-entry.js")),
+    requireFile(path.join(resolvedSource, "wabbajack.css")),
     requireFile(path.join(resolvedSource, "popup.html")),
     requireFile(path.join(resolvedSource, "popup.js")),
     requireFile(path.join(resolvedSource, "popup.css")),
@@ -101,11 +113,23 @@ export async function buildExtension({ sourceDir, dataDir, outputRoot }) {
     requireFile(path.join(resolvedData, "modlists.json")),
   ]);
 
-  const [core, background, content, css, popupHtml, popupScript, popupCss] = await Promise.all([
+  const [
+    core,
+    background,
+    content,
+    css,
+    wabbajackContent,
+    wabbajackCss,
+    popupHtml,
+    popupScript,
+    popupCss,
+  ] = await Promise.all([
     readFile(path.join(resolvedSource, "core.mjs"), "utf8"),
     readFile(path.join(resolvedSource, "background.js"), "utf8"),
     readFile(path.join(resolvedSource, "content-entry.js"), "utf8"),
     readFile(path.join(resolvedSource, "content.css"), "utf8"),
+    readFile(path.join(resolvedSource, "wabbajack-entry.js"), "utf8"),
+    readFile(path.join(resolvedSource, "wabbajack.css"), "utf8"),
     readFile(path.join(resolvedSource, "popup.html"), "utf8"),
     readFile(path.join(resolvedSource, "popup.js"), "utf8"),
     readFile(path.join(resolvedSource, "popup.css"), "utf8"),
@@ -122,6 +146,8 @@ export async function buildExtension({ sourceDir, dataDir, outputRoot }) {
       writeFile(path.join(targetRoot, "background.js"), background, "utf8"),
       writeFile(path.join(targetRoot, "content.js"), content, "utf8"),
       writeFile(path.join(targetRoot, "content.css"), css, "utf8"),
+      writeFile(path.join(targetRoot, "wabbajack.js"), wabbajackContent, "utf8"),
+      writeFile(path.join(targetRoot, "wabbajack.css"), wabbajackCss, "utf8"),
       writeFile(path.join(targetRoot, "popup.html"), popupHtml, "utf8"),
       writeFile(path.join(targetRoot, "popup.js"), popupScript, "utf8"),
       writeFile(path.join(targetRoot, "popup.css"), popupCss, "utf8"),

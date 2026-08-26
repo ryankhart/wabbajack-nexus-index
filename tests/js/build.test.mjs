@@ -95,6 +95,12 @@ test("builds minimally permissioned Chrome and Firefox packages with remote fall
       "https://next.nexusmods.com/*",
     ]);
     assert.deepEqual(manifest.content_scripts[0].js, ["core.global.js", "content.js"]);
+    assert.deepEqual(manifest.content_scripts[1], {
+      matches: ["https://www.wabbajack.org/search/*"],
+      js: ["core.global.js", "wabbajack.js"],
+      css: ["wabbajack.css"],
+      run_at: "document_idle",
+    });
     assert.ok(
       manifest.web_accessible_resources[0].resources.includes("assets/*.png"),
       "the packaged mark must be readable from the injected page"
@@ -168,6 +174,14 @@ test("builds minimally permissioned Chrome and Firefox packages with remote fall
     );
     assert.doesNotMatch(background, /\beval\(|\bFunction\(/);
     assert.match(await readFile(path.join(targetRoot, "popup.css"), "utf8"), /\.popup/);
+    assert.match(
+      await readFile(path.join(targetRoot, "wabbajack.js"), "utf8"),
+      /data-wjni-link/
+    );
+    assert.match(
+      await readFile(path.join(targetRoot, "wabbajack.css"), "utf8"),
+      /\.wjni-archive-link/
+    );
     const core = await readFile(path.join(targetRoot, "core.global.js"), "utf8");
     assert.doesNotMatch(core, /export function/);
     assert.match(core, /globalThis\.WJNI/);
@@ -179,6 +193,16 @@ test("builds minimally permissioned Chrome and Firefox packages with remote fall
       "function",
       "the built API must expose every helper used by content.js"
     );
+    assert.equal(
+      typeof context.WJNI.parseWabbajackArchiveSearchUrl,
+      "function",
+      "the built API must expose Wabbajack route parsing"
+    );
+    assert.equal(
+      typeof context.WJNI.createNexusArchiveLinks,
+      "function",
+      "the built API must expose exact Nexus archive link projection"
+    );
   }
 
   const firefox = JSON.parse(
@@ -187,6 +211,14 @@ test("builds minimally permissioned Chrome and Firefox packages with remote fall
   assert.equal(
     firefox.browser_specific_settings.gecko.id,
     "wabbajack-nexus-index@local"
+  );
+  assert.equal(
+    firefox.browser_specific_settings.gecko.strict_min_version,
+    "142.0"
+  );
+  assert.deepEqual(
+    firefox.browser_specific_settings.gecko.data_collection_permissions,
+    { required: ["none"] }
   );
 
   const [chromeFiles, firefoxFiles] = await Promise.all([
