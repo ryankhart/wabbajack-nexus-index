@@ -6,6 +6,7 @@ import os
 import shutil
 import sqlite3
 import tempfile
+import time
 from collections import Counter, defaultdict
 from contextlib import closing
 from pathlib import Path
@@ -61,6 +62,17 @@ def _available_backup_path(output: Path) -> Path:
     return candidate
 
 
+def _replace_with_retry(source: Path, destination: Path) -> None:
+    for attempt in range(5):
+        try:
+            os.replace(source, destination)
+            return
+        except PermissionError:
+            if attempt == 4:
+                raise
+            time.sleep(0.05 * (attempt + 1))
+
+
 def publish_dataset(
     database_path: str | Path,
     output_path: str | Path,
@@ -74,6 +86,7 @@ def publish_dataset(
         tempfile.mkdtemp(prefix=output.name + ".candidate.", dir=output.parent)
     )
     backup = output.with_name(output.name + ".previous")
+    preserve_temporary = False
     try:
         with closing(sqlite3.connect(database)) as connection:
             connection.row_factory = sqlite3.Row
@@ -227,12 +240,12 @@ def publish_dataset(
             except OSError:
                 backup = _available_backup_path(output)
         if output.exists():
-            os.replace(output, backup)
+            _replace_with_retry(output, backup)
         try:
-            os.replace(temporary, output)
+            _replace_with_retry(temporary, output)
         except Exception:
             if backup.exists() and not output.exists():
-                os.replace(backup, output)
+                _replace_with_retry(backup, output)
             raise
         if backup.exists():
             try:
@@ -242,10 +255,19 @@ def publish_dataset(
                 # temporarily retain a handle to the old tree, so leave it for a
                 # later run instead of reporting a false publication failure.
                 pass
-    except Exception:
+    except Exception as publication_error:
         if temporary.exists():
-            os.replace(temporary, _failed_candidate_path(output, generated_at))
+            try:
+                _replace_with_retry(
+                    temporary, _failed_candidate_path(output, generated_at)
+                )
+            except OSError as retention_error:
+                preserve_temporary = True
+                publication_error.add_note(
+                    "failed publication candidate remains at "
+                    f"{temporary}: {type(retention_error).__name__}: {retention_error}"
+                )
         raise
     finally:
-        if temporary.exists():
+        if temporary.exists() and not preserve_temporary:
             shutil.rmtree(temporary)

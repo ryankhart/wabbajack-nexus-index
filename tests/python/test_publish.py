@@ -1,5 +1,6 @@
 import hashlib
 import json
+import os
 import shutil
 import sqlite3
 import tempfile
@@ -226,6 +227,65 @@ class PublishDatasetTests(unittest.TestCase):
 
         self.assertEqual("2026-08-27T00:00:00Z", metadata["generatedAt"])
         self.assertTrue(backup_exists)
+
+    def test_retries_a_transient_windows_directory_replace_failure(self):
+        record = normalize_repository_payload(
+            repository_name="fixture",
+            repository_url="https://example.invalid/modlists.json",
+            payload={
+                "title": "Replace Fixture",
+                "game": "skyrimspecialedition",
+                "version": "1.0.0",
+                "links": {
+                    "machineURL": "ReplaceFixture",
+                    "download": "https://cdn.example/replace",
+                },
+                "download_metadata": {"Hash": "replace="},
+            },
+        )[0]
+        run = index_catalog_records(
+            [record], read_manifest=lambda _: {"Archives": []}
+        )
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            database_path = root / "index.sqlite"
+            output_path = root / "published"
+            write_index_run(
+                database_path, run, generated_at="2026-08-25T00:00:00Z"
+            )
+            publish_dataset(
+                database_path,
+                output_path,
+                generated_at="2026-08-25T00:00:00Z",
+            )
+            real_replace = os.replace
+            candidate_attempts = 0
+
+            def fail_candidate_replace_once(source, destination):
+                nonlocal candidate_attempts
+                if (
+                    Path(source).name.startswith("published.candidate.")
+                    and Path(destination) == output_path
+                ):
+                    candidate_attempts += 1
+                    if candidate_attempts == 1:
+                        raise PermissionError("candidate directory is temporarily locked")
+                return real_replace(source, destination)
+
+            with patch("pipeline.publish.os.replace", side_effect=fail_candidate_replace_once):
+                publish_dataset(
+                    database_path,
+                    output_path,
+                    generated_at="2026-08-26T00:00:00Z",
+                )
+
+            metadata = json.loads(
+                (output_path / "index-meta.json").read_text("utf-8")
+            )
+
+        self.assertEqual(2, candidate_attempts)
+        self.assertEqual("2026-08-26T00:00:00Z", metadata["generatedAt"])
 
 
 if __name__ == "__main__":
