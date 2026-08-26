@@ -1,6 +1,6 @@
 # Unofficial Wabbajack-Nexus Index
 
-See which Wabbajack modlists include a Nexus mod, right on its Nexus Mods page. The extension also adds direct Nexus Mods links to Wabbajack archive lists. Unofficial extensions for Chrome and Firefox.
+See which Wabbajack modlists include a Nexus mod, right on its Nexus Mods page. The extension also adds direct links to Nexus Mods on Wabbajack archive lists. Browser extensions available for both Chrome and Firefox.
 
 ## Status
 
