@@ -57,7 +57,7 @@ async function requireFile(filePath) {
 
 function transformCore(source) {
   const script = source.replace(/^export\s+/gm, "");
-  return `${script}\n\nglobalThis.WJNI = Object.freeze({\n  parseNexusModUrl,\n  bucketForMod,\n  createListRows,\n});\n`;
+  return `${script}\n\nglobalThis.WJNI = Object.freeze({\n  parseNexusModUrl,\n  bucketForMod,\n  createRetryableLoader,\n  createListRows,\n});\n`;
 }
 
 export async function buildExtension({ sourceDir, dataDir, outputRoot }) {

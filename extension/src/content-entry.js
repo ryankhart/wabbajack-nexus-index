@@ -2,6 +2,7 @@
   "use strict";
 
   const PANEL_ID = "wjni-panel";
+  const PREVIEW_LIMIT = 4;
   const COLLECTIONS_LABEL = "collections containing this mod";
   const runtime = globalThis.chrome?.runtime || globalThis.browser?.runtime;
   const api = globalThis.WJNI;
@@ -39,6 +40,10 @@
     return null;
   }
 
+  function findAccordionList() {
+    return document.querySelector("dl.accordion");
+  }
+
   function findFallbackAnchor() {
     const candidates = document.querySelectorAll("h1, h2, h3, main section");
     for (const candidate of candidates) {
@@ -50,6 +55,11 @@
   }
 
   function placePanel(panel) {
+    const accordion = findAccordionList();
+    if (accordion) {
+      accordion.append(panel);
+      return;
+    }
     const anchor = findCollectionsAnchor() || findFallbackAnchor();
     if (anchor === document.body || anchor.tagName === "MAIN") {
       anchor.prepend(panel);
@@ -135,13 +145,17 @@
       rows.length === 1 ? "" : "s"
     }`;
     introHeading.append(introIcon, introText);
+    const introActions = document.createElement("div");
+    introActions.className = "wjni-intro-actions";
     const freshness = document.createElement("span");
+    freshness.className = "wjni-freshness";
     freshness.textContent = generatedAt ? `Index updated ${generatedAt}` : "Bundled index";
-    intro.append(introHeading, freshness);
 
     const grid = document.createElement("div");
+    grid.id = `${PANEL_ID}-grid`;
     grid.className = "wjni-grid";
-    for (const row of rows) {
+
+    function createCard(row) {
       const card = document.createElement("article");
       card.className = "wjni-card";
 
@@ -179,8 +193,33 @@
       facts.append(modCount, separator, classification);
       copy.append(name, facts);
       card.append(icon, copy);
-      grid.append(card);
+      return card;
     }
+
+    function renderCards(expanded) {
+      const visibleRows = expanded ? rows : rows.slice(0, PREVIEW_LIMIT);
+      grid.replaceChildren(...visibleRows.map(createCard));
+    }
+
+    if (rows.length > PREVIEW_LIMIT) {
+      const viewToggle = document.createElement("button");
+      viewToggle.type = "button";
+      viewToggle.className = "wjni-view-toggle";
+      viewToggle.textContent = "View all";
+      viewToggle.setAttribute("aria-expanded", "false");
+      viewToggle.setAttribute("aria-controls", grid.id);
+      viewToggle.addEventListener("click", () => {
+        const expanded = viewToggle.getAttribute("aria-expanded") !== "true";
+        viewToggle.setAttribute("aria-expanded", String(expanded));
+        viewToggle.textContent = expanded ? "Collapse" : "View all";
+        renderCards(expanded);
+      });
+      introActions.append(viewToggle);
+    }
+
+    introActions.append(freshness);
+    intro.append(introHeading, introActions);
+    renderCards(false);
     body.append(intro, grid);
   }
 
@@ -224,8 +263,12 @@
     }
     const route = `${identity.gameDomain}:${identity.modId}`;
     if (existing && existing.dataset.route === route) {
+      const accordion = findAccordionList();
       const collectionsAnchor = findCollectionsAnchor();
-      if (collectionsAnchor && existing.previousElementSibling !== collectionsAnchor) {
+      if (
+        (accordion && existing.parentElement !== accordion) ||
+        (!accordion && collectionsAnchor && existing.previousElementSibling !== collectionsAnchor)
+      ) {
         placePanel(existing);
       }
       return;
@@ -277,8 +320,13 @@
       return;
     }
     const panel = document.getElementById(PANEL_ID);
+    const accordion = findAccordionList();
     const collectionsAnchor = findCollectionsAnchor();
-    if (!panel || (collectionsAnchor && panel.previousElementSibling !== collectionsAnchor)) {
+    if (
+      !panel ||
+      (accordion && panel.parentElement !== accordion) ||
+      (!accordion && collectionsAnchor && panel.previousElementSibling !== collectionsAnchor)
+    ) {
       scheduleRender();
     }
   });

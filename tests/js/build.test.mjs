@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { mkdtemp, mkdir, readFile, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import vm from "node:vm";
 
 import { buildExtension } from "../../scripts/build-extension.mjs";
 
@@ -42,6 +43,14 @@ test("builds permission-free Chrome and Firefox packages with bundled data", asy
     const core = await readFile(path.join(targetRoot, "core.global.js"), "utf8");
     assert.doesNotMatch(core, /export function/);
     assert.match(core, /globalThis\.WJNI/);
+    const context = { URL };
+    context.globalThis = context;
+    vm.runInNewContext(core, context);
+    assert.equal(
+      typeof context.WJNI.createRetryableLoader,
+      "function",
+      "the built API must expose every helper used by content.js"
+    );
   }
 
   const firefox = JSON.parse(
