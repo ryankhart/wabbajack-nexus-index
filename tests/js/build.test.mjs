@@ -29,11 +29,30 @@ test("builds permission-free Chrome and Firefox packages with bundled data", asy
     const targetRoot = path.join(output, target);
     const manifest = JSON.parse(await readFile(path.join(targetRoot, "manifest.json")));
     assert.equal(manifest.manifest_version, 3);
+    assert.equal(manifest.name, "Unofficial Wabbajack-Nexus Index");
+    assert.equal(
+      manifest.description,
+      "Unofficial, independent index of Wabbajack modlists for Nexus Mods pages; not affiliated with Wabbajack or Nexus Mods."
+    );
+    assert.equal(
+      manifest.homepage_url,
+      "https://github.com/ryankhart/wabbajack-nexus-index"
+    );
     assert.deepEqual(manifest.permissions ?? [], []);
     assert.deepEqual(manifest.host_permissions ?? [], []);
     assert.deepEqual(manifest.action, {
+      default_icon: {
+        16: "assets/icon-16.png",
+        32: "assets/icon-32.png",
+      },
       default_popup: "popup.html",
-      default_title: "Wabbajack Nexus Index",
+      default_title: "Unofficial Wabbajack-Nexus Index",
+    });
+    assert.deepEqual(manifest.icons, {
+      16: "assets/icon-16.png",
+      32: "assets/icon-32.png",
+      48: "assets/icon-48.png",
+      128: "assets/icon-128.png",
     });
     assert.deepEqual(manifest.content_scripts[0].matches, [
       "https://www.nexusmods.com/*/mods/*",
@@ -41,13 +60,26 @@ test("builds permission-free Chrome and Firefox packages with bundled data", asy
     ]);
     assert.deepEqual(manifest.content_scripts[0].js, ["core.global.js", "content.js"]);
     assert.ok(
-      manifest.web_accessible_resources[0].resources.includes("assets/*.webp"),
-      "the bundled logo must be readable from the injected page"
+      manifest.web_accessible_resources[0].resources.includes("assets/*.png"),
+      "the original mark must be readable from the injected page"
     );
     assert.ok(
-      (await readFile(path.join(targetRoot, "assets", "wabbajack-transparent.webp")))
-        .byteLength > 0,
-      "the built package must contain the Wabbajack logo"
+      !manifest.web_accessible_resources[0].resources.includes("assets/*.webp"),
+      "the package must not expose the retired Wabbajack logo format"
+    );
+    for (const size of [16, 32, 48, 128]) {
+      const icon = await readFile(path.join(targetRoot, "assets", `icon-${size}.png`));
+      assert.ok(
+        icon.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])),
+        `icon-${size}.png must be a PNG`
+      );
+      assert.equal(icon.readUInt32BE(16), size);
+      assert.equal(icon.readUInt32BE(20), size);
+    }
+    await assert.rejects(
+      readFile(path.join(targetRoot, "assets", "wabbajack-transparent.webp")),
+      /ENOENT/,
+      "the copied Wabbajack logo must not ship"
     );
     assert.equal(
       JSON.parse(await readFile(path.join(targetRoot, "data", "index-meta.json"))).bucketSize,

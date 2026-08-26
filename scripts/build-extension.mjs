@@ -17,14 +17,24 @@ const CONTENT_MATCHES = [
 function manifestFor(target) {
   const manifest = {
     manifest_version: 3,
-    name: "Wabbajack Nexus Index",
+    name: "Unofficial Wabbajack-Nexus Index",
     version: "0.1.0",
     description:
-      "Shows which Wabbajack modlists include the Nexus mod page you are viewing.",
-    homepage_url: "https://www.wabbajack.org/",
+      "Unofficial, independent index of Wabbajack modlists for Nexus Mods pages; not affiliated with Wabbajack or Nexus Mods.",
+    homepage_url: "https://github.com/ryankhart/wabbajack-nexus-index",
+    icons: {
+      16: "assets/icon-16.png",
+      32: "assets/icon-32.png",
+      48: "assets/icon-48.png",
+      128: "assets/icon-128.png",
+    },
     action: {
+      default_icon: {
+        16: "assets/icon-16.png",
+        32: "assets/icon-32.png",
+      },
       default_popup: "popup.html",
-      default_title: "Wabbajack Nexus Index",
+      default_title: "Unofficial Wabbajack-Nexus Index",
     },
     content_scripts: [
       {
@@ -36,7 +46,7 @@ function manifestFor(target) {
     ],
     web_accessible_resources: [
       {
-        resources: ["assets/*.webp", "data/*.json", "data/games/*/*.json"],
+        resources: ["assets/*.png", "data/*.json", "data/games/*/*.json"],
         matches: CONTENT_MATCHES,
       },
     ],
@@ -75,7 +85,9 @@ export async function buildExtension({ sourceDir, dataDir, outputRoot }) {
     requireFile(path.join(resolvedSource, "popup.html")),
     requireFile(path.join(resolvedSource, "popup.js")),
     requireFile(path.join(resolvedSource, "popup.css")),
-    requireFile(path.join(resolvedSource, "assets", "wabbajack-transparent.webp")),
+    ...[16, 32, 48, 128].map((size) =>
+      requireFile(path.join(resolvedSource, "assets", `icon-${size}.png`))
+    ),
     requireFile(path.join(resolvedData, "index-meta.json")),
     requireFile(path.join(resolvedData, "modlists.json")),
   ]);

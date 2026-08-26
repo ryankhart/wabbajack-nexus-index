@@ -1,4 +1,4 @@
-# Wabbajack Nexus Index
+# Unofficial Wabbajack-Nexus Index
 
 A local-first Chrome and Firefox extension plus reproducible data pipeline that shows which indexed Wabbajack modlists include the Nexus Mods page currently being viewed.
 

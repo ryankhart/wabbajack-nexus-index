@@ -48,6 +48,7 @@ Checkpoint: a complete-for-frontier or honestly partial snapshot exists, with no
 - [ ] EXT-T4 (AC-EXT-013–016): RED loading/empty/partial/error tests → implement resilient shell/retry → commit.
 - [ ] EXT-T5 (AC-EXT-017–019): RED manifest/build validation → build Chrome and Firefox packages → commit.
 - [ ] EXT-T6 (AC-EXT-020–023): keyboard/accessibility tests plus live representative viewport screenshots and geometry assertions → fix via RED/GREEN → commit.
+- [ ] EXT-T7 (AC-EXT-024–028): RED manifest/popup identity and packaged-icon tests → replace borrowed branding with exact unofficial copy and an original small-size magic-index mark → verify 16/32/48/128-pixel rasters plus popup/panel screenshots → commit.
 
 Checkpoint: unpacked Chrome and Firefox builds work on fixture and live Nexus pages.
 

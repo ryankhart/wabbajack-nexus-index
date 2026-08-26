@@ -24,7 +24,7 @@
       }).format(generatedDate);
       status.dataset.state = "ready";
     } catch (error) {
-      console.warn("Wabbajack Nexus Index popup could not read metadata", error);
+      console.warn("Unofficial Wabbajack-Nexus Index popup could not read metadata", error);
       freshness.removeAttribute("datetime");
       freshness.textContent = "Unable to read bundled index metadata";
       status.dataset.state = "error";

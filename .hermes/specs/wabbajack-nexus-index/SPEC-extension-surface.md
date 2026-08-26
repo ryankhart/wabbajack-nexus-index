@@ -60,6 +60,14 @@ DOM selectors remain adapter details and must be discovered/verified against the
 - AC-EXT-022: Blue/red text meets contrast targets against the panel background, and classification includes literal text/icons so color is not the only cue.
 - AC-EXT-023: Injected CSS is fully namespaced and does not alter untargeted Nexus geometry.
 
+### REQ-EXT-007: Present an independent extension identity
+
+- AC-EXT-024: Chrome and Firefox packages, toolbar labels, and popup headings use the exact product name `Unofficial Wabbajack-Nexus Index`.
+- AC-EXT-025: The manifest and popup plainly state that the extension is independent, unofficial, and not affiliated with or endorsed by Wabbajack or Nexus Mods.
+- AC-EXT-026: The manifest homepage targets `https://github.com/ryankhart/wabbajack-nexus-index`; creating or pushing that remote remains outside this change.
+- AC-EXT-027: The package uses an original magic-index mark at 16, 32, 48, and 128 pixels for browser and in-product identity, with no copied Wabbajack logo asset.
+- AC-EXT-028: The 16-pixel mark retains a distinct portal, wand, and spark silhouette on transparent, light, and dark surroundings.
+
 ## Non-Goals
 
 - Installing a modlist from the extension in v1.
@@ -98,10 +106,11 @@ Pure tests cover URL parsing, projection, ordering, and safe DOM construction. S
 | AC-EXT-013–016 | resilience-state tests | EXT-T4 |
 | AC-EXT-017–019 | manifest/build validation | EXT-T5 |
 | AC-EXT-020–023 | accessibility + browser geometry/screenshots | EXT-T6 |
+| AC-EXT-024–028 | manifest/build tests + raster dimension checks + small-size screenshots | EXT-T7 |
 
 ## Success Criteria
 
-Both browser packages load without errors and, on a known indexed Nexus mod page, show the exact matching list set with required blue counts, red `Adult` text only for Wabbajack-classified NSFW lists, working official links, and resilient accessible states.
+Both browser packages load without errors and, on a known indexed Nexus mod page, show the exact matching list set with required blue counts, red `Adult` text only for Wabbajack-classified NSFW lists, working official links, resilient accessible states, and a clearly unofficial identity using an original legible small-size mark.
 
 ## Resolved Decisions
 

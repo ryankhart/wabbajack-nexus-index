@@ -117,7 +117,7 @@ test("matches Nexus collection cards and only labels adult modlists", async () =
   );
 });
 
-test("uses the bundled Wabbajack logo beside the inclusion heading", async () => {
+test("uses the original small-size mark beside the inclusion heading", async () => {
   const [content, css] = await Promise.all([
     readFile(contentPath, "utf8"),
     readFile(cssPath, "utf8"),
@@ -126,14 +126,14 @@ test("uses the bundled Wabbajack logo beside the inclusion heading", async () =>
   assert.match(content, /introIcon = document\.createElement\("img"\)/);
   assert.match(
     content,
-    /introIcon\.src = runtime\.getURL\("assets\/wabbajack-transparent\.webp"\)/
+    /introIcon\.src = runtime\.getURL\("assets\/icon-32\.png"\)/
   );
   assert.doesNotMatch(content, /introIcon\.textContent = "◆"/);
   assert.match(
     css,
-    /\.wjni-intro-icon\s*\{[^}]*width:\s*20px;[^}]*height:\s*20px;[^}]*filter:\s*grayscale\(1\) brightness\(2\.2\) contrast\(1\.15\);/s
+    /\.wjni-intro-icon\s*\{[^}]*width:\s*20px;[^}]*height:\s*20px;[^}]*image-rendering:\s*auto;/s
   );
-  assert.doesNotMatch(css, /\.wjni-intro-icon\s*\{[^}]*invert\(/s);
+  assert.doesNotMatch(css, /\.wjni-intro-icon\s*\{[^}]*filter:/s);
 });
 
 test("uses Nexus translucent surfaces with color-mix fallbacks", async () => {

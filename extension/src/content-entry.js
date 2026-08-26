@@ -183,7 +183,7 @@
     introHeading.className = "wjni-intro-heading";
     const introIcon = document.createElement("img");
     introIcon.className = "wjni-intro-icon";
-    introIcon.src = runtime.getURL("assets/wabbajack-transparent.webp");
+    introIcon.src = runtime.getURL("assets/icon-32.png");
     introIcon.alt = "";
     introIcon.setAttribute("aria-hidden", "true");
     const introText = document.createElement("strong");
@@ -360,7 +360,7 @@
       }
     } catch (error) {
       if (generation === renderGeneration && panel.isConnected) {
-        console.warn("Wabbajack Nexus Index lookup failed", error);
+        console.warn("Unofficial Wabbajack-Nexus Index lookup failed", error);
         renderMessage(
           panel,
           "The bundled Wabbajack index could not be read. Reload the page or update the extension.",

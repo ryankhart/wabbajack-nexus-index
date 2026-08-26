@@ -28,3 +28,22 @@ test("shows bundled index freshness only in the toolbar popup", async () => {
   assert.match(css, /\.popup\s*\{/);
   assert.match(css, /@media \(prefers-color-scheme: light\)/);
 });
+
+test("identifies the extension as unofficial and independent", async () => {
+  const [html, css] = await Promise.all([
+    readFile(popupHtmlPath, "utf8"),
+    readFile(popupCssPath, "utf8"),
+  ]);
+
+  assert.match(html, /<title>Unofficial Wabbajack-Nexus Index<\/title>/);
+  assert.match(html, /<h1 id="popup-title">Unofficial Wabbajack-Nexus Index<\/h1>/);
+  assert.match(
+    html,
+    /Independent and unofficial\. Not affiliated with or endorsed by Wabbajack or Nexus Mods\./
+  );
+  assert.match(html, /src="assets\/icon-32\.png"/);
+  assert.doesNotMatch(html, /wabbajack-transparent/);
+  assert.doesNotMatch(css, /\.popup-logo\s*\{[^}]*filter:/s);
+  assert.match(css, /body\s*\{[^}]*width:\s*360px;[^}]*max-width:\s*100vw;/s);
+  assert.match(css, /\.popup-disclaimer\s*\{[^}]*overflow-wrap:\s*anywhere;/s);
+});
