@@ -5,6 +5,8 @@
   const PREVIEW_LIMIT = 4;
   const COLLECTIONS_LABEL = "collections containing this mod";
   const COLLECTIONS_CONTINUATION_CLASS = "wjni-collections-continues";
+  const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
+  const XLINK_NAMESPACE = "http://www.w3.org/1999/xlink";
   const runtime = globalThis.chrome?.runtime || globalThis.browser?.runtime;
   const api = globalThis.WJNI;
   let lastRoute = "";
@@ -124,15 +126,25 @@
 
     const button = document.createElement("button");
     button.type = "button";
-    button.className = "wjni-summary";
+    button.className = "wjni-summary accopen";
     button.setAttribute("aria-expanded", "true");
     const title = document.createElement("span");
     title.className = "wjni-summary-title";
     title.textContent = "Wabbajack modlists containing this mod";
     const chevron = document.createElement("span");
-    chevron.className = "wjni-chevron";
+    chevron.className = "wjni-chevron acc-status";
     chevron.setAttribute("aria-hidden", "true");
-    chevron.textContent = "⌃";
+    const chevronIcon = document.createElementNS(SVG_NAMESPACE, "svg");
+    chevronIcon.setAttribute("class", "icon icon-arrow");
+    const chevronUse = document.createElementNS(SVG_NAMESPACE, "use");
+    chevronUse.setAttribute("href", "/assets/images/icons/icons.svg#icon-arrow");
+    chevronUse.setAttributeNS(
+      XLINK_NAMESPACE,
+      "xlink:href",
+      "/assets/images/icons/icons.svg#icon-arrow"
+    );
+    chevronIcon.append(chevronUse);
+    chevron.append(chevronIcon);
     button.append(title, chevron);
 
     const body = document.createElement("div");
@@ -146,7 +158,7 @@
     button.addEventListener("click", () => {
       const expanded = button.getAttribute("aria-expanded") === "true";
       button.setAttribute("aria-expanded", String(!expanded));
-      chevron.textContent = expanded ? "⌄" : "⌃";
+      button.classList.toggle("accopen", !expanded);
       body.hidden = expanded;
     });
 
