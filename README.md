@@ -2,6 +2,16 @@
 
 See which Wabbajack modlists include a Nexus mod, right on its Nexus Mods page. The extension also adds direct links to Nexus Mods on Wabbajack archive lists. Browser extensions available for both Chrome and Firefox.
 
+## See it in action
+
+On the live Nexus Mods page for Sawmill Activation Fix, the extension starts with one row of four matching modlists:
+
+![The extension showing four Wabbajack modlists on the live Sawmill Activation Fix Nexus Mods page](docs/images/sawmill-activation-fix-preview.png)
+
+Choose **View all** to expand the full grid:
+
+![The extension showing all eight Wabbajack modlists on the live Sawmill Activation Fix Nexus Mods page](docs/images/sawmill-activation-fix-full-grid.png)
+
 ## Status
 
 The Chrome and Firefox versions are working and use the same Wabbajack data. The source is public under Apache 2.0. Automatic data publishing and browser-store releases are not enabled yet.
