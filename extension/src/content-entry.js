@@ -184,14 +184,11 @@
       modCount.title = "Unique Nexus mod pages indexed from the current Wabbajack manifest";
       facts.append(modCount);
       if (row.classification === "NSFW") {
-        const separator = document.createElement("span");
-        separator.className = "wjni-separator";
-        separator.textContent = "•";
         const classification = document.createElement("span");
         classification.className = "wjni-classification";
         classification.textContent = "Adult";
         classification.setAttribute("aria-label", "Adult Wabbajack modlist");
-        facts.append(separator, classification);
+        facts.append(classification);
       }
       copy.append(name, facts);
       card.append(icon, copy);

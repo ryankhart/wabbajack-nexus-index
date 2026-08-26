@@ -67,10 +67,12 @@ test("matches Nexus collection cards and only labels adult modlists", async () =
 
   assert.match(content, /if \(row\.classification === "NSFW"\)/);
   assert.match(content, /classification\.textContent = "Adult"/);
+  assert.match(content, /facts\.append\(classification\)/);
   assert.doesNotMatch(content, /classification\.textContent = row\.classification/);
+  assert.doesNotMatch(content, /className = "wjni-separator"/);
   assert.match(
     css,
-    /\.wjni-card\s*\{[^}]*height:\s*56px;[^}]*padding:\s*8px;[^}]*background:\s*rgba\(255, 255, 255, 0\.1\);[^}]*border:\s*0;[^}]*border-radius:\s*4px;/s
+    /\.wjni-card\s*\{[^}]*height:\s*56px;[^}]*padding:\s*8px;[^}]*background:\s*var\(--wjni-surface-translucent-mid\);[^}]*border:\s*0;[^}]*border-radius:\s*4px;/s
   );
   assert.match(css, /\.wjni-card-icon\s*\{[^}]*width:\s*40px;[^}]*height:\s*40px;/s);
   assert.match(
@@ -80,6 +82,30 @@ test("matches Nexus collection cards and only labels adult modlists", async () =
   assert.match(
     css,
     /\.wjni-mod-count\s*\{[^}]*font-size:\s*12px;[^}]*font-weight:\s*300;[^}]*line-height:\s*16px;/s
+  );
+  assert.match(
+    css,
+    /\.wjni-classification\s*\{[^}]*color:\s*var\(--wjni-danger-strong\);[^}]*font-size:\s*12px;[^}]*font-weight:\s*300;[^}]*line-height:\s*16px;[^}]*letter-spacing:\s*0\.3px;/s
+  );
+});
+
+test("uses Nexus translucent surfaces with color-mix fallbacks", async () => {
+  const css = await readFile(cssPath, "utf8");
+
+  assert.match(css, /--wjni-surface-translucent-low:\s*#ffffff0d;/);
+  assert.match(css, /--wjni-surface-translucent-mid:\s*#ffffff1a;/);
+  assert.match(
+    css,
+    /@supports \(color:\s*color-mix\(in lab, red, red\)\)\s*\{[^}]*--wjni-surface-translucent-low:\s*color-mix\(in oklab, var\(--color-white, #fff\) 5%, transparent\);/s
+  );
+  assert.match(
+    css,
+    /@supports \(color:\s*color-mix\(in lab, red, red\)\)\s*\{[^}]*--wjni-surface-translucent-mid:\s*color-mix\(in oklab, var\(--color-white, #fff\) 10%, transparent\);/s
+  );
+  assert.match(css, /\.wjni-body\s*\{[^}]*background:\s*rgba\(255, 255, 255, 0\.1\);/s);
+  assert.match(
+    css,
+    /\.wjni-collection-shell\s*\{[^}]*background:\s*var\(--wjni-surface-translucent-low\);/s
   );
 });
 

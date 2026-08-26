@@ -1,16 +1,24 @@
 .wjni-panel {
   --wjni-bg: #34343a;
-  --wjni-card: rgba(255, 255, 255, 0.1);
   --wjni-border: rgba(255, 255, 255, 0.1);
+  --wjni-surface-translucent-low: #ffffff0d;
+  --wjni-surface-translucent-mid: #ffffff1a;
   --wjni-text: #f4f4f5;
   --wjni-muted: #d4d4d8;
   --wjni-blue: #93c5fd;
-  --wjni-red: #f87171;
+  --wjni-danger-strong: #f87171;
   box-sizing: border-box;
   width: 100%;
   margin: 0;
   color: var(--wjni-text);
   font-family: "Inter", "Inter Fallback", ui-sans-serif, system-ui, sans-serif;
+}
+
+@supports (color: color-mix(in lab, red, red)) {
+  .wjni-panel {
+    --wjni-surface-translucent-low: color-mix(in oklab, var(--color-white, #fff) 5%, transparent);
+    --wjni-surface-translucent-mid: color-mix(in oklab, var(--color-white, #fff) 10%, transparent);
+  }
 }
 
 .wjni-panel *,
@@ -64,8 +72,8 @@
 
 .wjni-body {
   padding: 20px 20px 0;
-  background: var(--wjni-bg);
-  border-top: 1px solid var(--wjni-border);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 0 0 4px 4px;
 }
 
 .wjni-body[hidden] {
@@ -78,7 +86,7 @@
   gap: 8px;
   margin-bottom: 20px;
   padding: 12px;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--wjni-surface-translucent-low);
   border-radius: 4px;
 }
 
@@ -156,7 +164,7 @@
   min-width: 0;
   min-height: 56px;
   padding: 8px;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--wjni-surface-translucent-mid);
   border: 0;
   border-radius: 4px;
 }
@@ -169,7 +177,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 4px;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--wjni-surface-translucent-low);
   color: var(--wjni-text);
   font-size: 14px;
   font-weight: 600;
@@ -206,7 +214,7 @@
 .wjni-facts {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   min-height: 16px;
 }
 
@@ -219,15 +227,11 @@
 }
 
 .wjni-classification {
-  color: var(--wjni-red);
+  color: var(--wjni-danger-strong);
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 300;
   line-height: 16px;
   letter-spacing: 0.3px;
-}
-
-.wjni-separator {
-  color: #929299;
 }
 
 
