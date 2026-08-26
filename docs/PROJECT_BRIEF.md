@@ -19,8 +19,8 @@ A live registry fetch on 2026-08-25 found:
 
 - 139 registered metadata repositories, all fetched successfully;
 - 221 current records across all games;
-- 125 current Skyrim-family records (`skyrim`, `skyrimspecialedition`, `skyrimvr`);
-- 103 Skyrim-family records not marked `force_down`;
+- 125 of those records were in the original Skyrim-family scope (`skyrim`, `skyrimspecialedition`, `skyrimvr`);
+- 103 Skyrim-family records were not marked `force_down`;
 - 36 records marked official and 23 marked NSFW;
 - 144.16 GiB of declared `.wabbajack` installer bytes.
 
@@ -33,7 +33,7 @@ These figures are evidence from one run, not constants. The pipeline must regene
 A build is `complete_for_registry` only when:
 
 1. every repository currently listed in the official registry was fetched or has a recorded terminal error;
-2. every current Skyrim-family record was classified as indexed, unavailable, malformed, unsupported, or excluded with a reason;
+2. every current registered record was classified as indexed, unavailable, malformed, unsupported, or excluded with a reason;
 3. every successfully opened manifest had every Nexus downloader state normalized and deduplicated by `(game_domain, mod_id)`;
 4. totals reconcile: discovered = indexed + terminal-status records;
 5. the output records source URLs, catalog hashes/versions, fetch time, and failure details.
@@ -53,7 +53,6 @@ Private lists, paywalled lists, Discord attachments without stable public URLs, 
 
 ## Non-goals for v1
 
-- Other games beyond the Skyrim family.
 - Downloading or installing mods.
 - Rehosting Nexus descriptions, images, authors, files, or download statistics.
 - Claiming discovery of private/unregistered Wabbajack lists.

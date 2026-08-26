@@ -110,6 +110,8 @@ class IndexCatalogRecordsTests(unittest.TestCase):
         def read_manifest(download_url):
             if download_url.endswith("/broken"):
                 raise OSError("CDN unavailable")
+            if download_url.endswith("/other"):
+                return {"Archives": []}
             return {
                 "Archives": [
                     {
@@ -126,12 +128,13 @@ class IndexCatalogRecordsTests(unittest.TestCase):
         result = index_catalog_records(records, read_manifest=read_manifest)
 
         self.assertEqual(3, result.discovered)
-        self.assertEqual(1, result.counts["indexed"])
+        self.assertEqual(2, result.counts["indexed"])
         self.assertEqual(1, result.counts["unavailable"])
-        self.assertEqual(1, result.counts["excluded"])
+        self.assertNotIn("excluded", result.counts)
         self.assertEqual(3, sum(result.counts.values()))
         self.assertEqual(1, result.items[0].nexus_mod_count)
         self.assertIn("CDN unavailable", result.items[1].error)
+        self.assertEqual("indexed", result.items[2].status)
 
     def test_force_down_and_unsupported_downloads_are_explicit(self):
         records = []

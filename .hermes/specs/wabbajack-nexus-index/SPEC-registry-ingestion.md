@@ -4,7 +4,7 @@ Module id: `registry-ingestion`
 
 ## Objective
 
-Build an exact, replayable index of Nexus mod-page membership for every current Skyrim-family Wabbajack record discoverable from the configured public registry frontier.
+Build an exact, replayable index of Nexus mod-page membership for every current Wabbajack record discoverable from the configured public registry frontier.
 
 ## Requirements and Acceptance Criteria
 
@@ -13,7 +13,7 @@ Build an exact, replayable index of Nexus mod-page membership for every current 
 - AC-ING-001: Given the official `repositories.json`, when discovery runs, then every named repository URL is fetched once and recorded with success or a terminal error.
 - AC-ING-002: Given repository payloads that are arrays or single objects, when parsed, then both forms produce normalized catalog records; any non-object entry or missing machine URL, version, or download hash makes that repository source a terminal error rather than silently dropping or collapsing the entry.
 - AC-ING-003: Given duplicate list/version records, when normalized, then `(repository_name, machine_url, version, download_hash)` is emitted once with all source provenance retained.
-- AC-ING-004: Given game values outside the configured Skyrim family, when v1 discovery runs, then they remain present in the discovery result with source provenance but are excluded from the in-scope index run, manifest acquisition, database, and publication.
+- AC-ING-004: Given any catalog game value, when discovery runs, then the record remains in scope and reaches an explicit terminal index status; unknown Nexus downloader game identities are rejected without guessing a domain.
 
 ### REQ-ING-002: Read Wabbajack manifests efficiently
 
@@ -40,7 +40,6 @@ Build an exact, replayable index of Nexus mod-page membership for every current 
 - Discovering private, paywalled, or unregistered files with no configured source adapter.
 - Downloading the mod archives referenced by a Wabbajack manifest.
 - Fuzzy matching Nexus titles, archive names, or authors.
-- Supporting non-Skyrim games in v1.
 
 ## Tech Stack
 
@@ -51,7 +50,7 @@ Build an exact, replayable index of Nexus mod-page membership for every current 
 
 - Focused test: `python -m unittest tests.python.test_<slice> -v`
 - Full test: `python -m unittest discover -s tests/python -v`
-- Build current index: `python -m pipeline build --game-family skyrim`
+- Build current index: `python -m pipeline build --workers 6`
 
 ## Project Structure
 
@@ -85,7 +84,7 @@ Strict vertical RED → GREEN cycles. Unit tests use synthetic byte fixtures and
 
 ## Success Criteria
 
-The pipeline processes every currently registered Skyrim-family record to one terminal state, extracts exact Nexus membership for every successfully read manifest, and emits reconciliation totals that balance.
+The pipeline processes every currently registered record to one terminal state, extracts exact Nexus membership for every successfully read manifest, and emits reconciliation totals that balance.
 
 ## Open Questions
 

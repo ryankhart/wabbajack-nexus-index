@@ -11,12 +11,21 @@ test("builds permission-free Chrome and Firefox packages with bundled data", asy
   const root = await mkdtemp(path.join(os.tmpdir(), "wjni-build-"));
   const data = path.join(root, "data");
   const output = path.join(root, "dist");
-  await mkdir(path.join(data, "games", "skyrimspecialedition"), { recursive: true });
+  const gameDomains = ["skyrimspecialedition", "newvegas", "7daystodie"];
+  await Promise.all(
+    gameDomains.map((gameDomain) =>
+      mkdir(path.join(data, "games", gameDomain), { recursive: true })
+    )
+  );
   await writeFile(path.join(data, "index-meta.json"), JSON.stringify({ bucketSize: 1000 }));
   await writeFile(path.join(data, "modlists.json"), "{}");
-  await writeFile(
-    path.join(data, "games", "skyrimspecialedition", "0.json"),
-    JSON.stringify({ mods: {} })
+  await Promise.all(
+    gameDomains.map((gameDomain) =>
+      writeFile(
+        path.join(data, "games", gameDomain, "0.json"),
+        JSON.stringify({ gameDomain, mods: {} })
+      )
+    )
   );
 
   await buildExtension({
@@ -85,6 +94,14 @@ test("builds permission-free Chrome and Firefox packages with bundled data", asy
       JSON.parse(await readFile(path.join(targetRoot, "data", "index-meta.json"))).bucketSize,
       1000
     );
+    for (const gameDomain of gameDomains) {
+      assert.equal(
+        JSON.parse(
+          await readFile(path.join(targetRoot, "data", "games", gameDomain, "0.json"))
+        ).gameDomain,
+        gameDomain
+      );
+    }
     assert.match(await readFile(path.join(targetRoot, "popup.html"), "utf8"), /popup\.js/);
     assert.match(
       await readFile(path.join(targetRoot, "popup.js"), "utf8"),

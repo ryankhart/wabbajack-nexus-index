@@ -19,6 +19,14 @@ test("parses canonical Nexus mod identity and ignores query/hash", () => {
     parseNexusModUrl("https://next.nexusmods.com/skyrimspecialedition/mods/42"),
     { gameDomain: "skyrimspecialedition", modId: 42 }
   );
+  assert.deepEqual(
+    parseNexusModUrl("https://www.nexusmods.com/newvegas/mods/123"),
+    { gameDomain: "newvegas", modId: 123 }
+  );
+  assert.deepEqual(
+    parseNexusModUrl("https://www.nexusmods.com/7daystodie/mods/456"),
+    { gameDomain: "7daystodie", modId: 456 }
+  );
 });
 
 test("rejects non-detail pages, non-Nexus hosts, and malformed IDs", () => {

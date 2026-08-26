@@ -21,8 +21,8 @@ DOM selectors remain adapter details and must be discovered/verified against the
 
 ### REQ-EXT-001: Detect exact Nexus page identity
 
-- AC-EXT-001: Given `/skyrimspecialedition/mods/12604` with optional query/hash, when parsed, then identity is `('skyrimspecialedition', 12604)`.
-- AC-EXT-002: Given unsupported games, listing/search routes, malformed IDs, zero, negatives, or deceptive text elsewhere in the URL, then no lookup or panel mount occurs.
+- AC-EXT-001: Given a canonical Nexus mod URL for any published game domain, such as `/newvegas/mods/123`, with optional query/hash, when parsed, then the exact domain and positive integer mod ID are preserved.
+- AC-EXT-002: Given listing/search routes, malformed domains or IDs, zero, negatives, non-Nexus hosts, or deceptive text elsewhere in the URL, then no lookup or panel mount occurs.
 - AC-EXT-003: Given canonical URL metadata that agrees with the path, then the path identity remains stable; disagreement is surfaced diagnostically and never title-matched.
 
 ### REQ-EXT-002: Mount safely and idempotently

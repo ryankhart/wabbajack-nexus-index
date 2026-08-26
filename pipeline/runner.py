@@ -75,7 +75,7 @@ def run_update(
             for name, source in sorted(source_failures.items())
         )
         raise IncompleteCatalogError(f"catalog discovery incomplete: {details}")
-    records = tuple(record for record in discovery.records if record.in_skyrim_family)
+    records = discovery.records
     verified_snapshots = load_verified_snapshots(database_path)
     stale_snapshots = load_latest_verified_memberships(database_path)
     manifest_reader = read_manifest or (

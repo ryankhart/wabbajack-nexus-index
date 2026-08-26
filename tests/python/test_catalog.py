@@ -69,7 +69,6 @@ class NormalizeRepositoryPayloadTests(unittest.TestCase):
         self.assertEqual("ExampleList", record.machine_url)
         self.assertEqual("skyrimspecialedition", record.game)
         self.assertEqual("abc=", record.download_hash)
-        self.assertTrue(record.in_skyrim_family)
 
     def test_collapses_exact_duplicate_list_snapshots(self):
         entry = {

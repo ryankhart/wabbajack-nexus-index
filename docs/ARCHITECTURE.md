@@ -5,7 +5,7 @@
 ```text
 Wabbajack registry
   -> repository metadata adapters
-  -> current Skyrim-family list inventory
+  -> complete current registered list inventory
   -> CDN chunk definitions
   -> seekable ZIP manifest reader
   -> NexusDownloader normalization
@@ -36,11 +36,16 @@ Canonical Nexus identity:
 
 `file_id` is retained as membership evidence/version detail but does not define the mod page. Multiple files from one Nexus mod count once toward that list's displayed mod count. The list count therefore means **unique Nexus mod pages represented in the manifest**, not Wabbajack archive count, MO2 separator count, or installed-file count.
 
-Game aliases normalize to Nexus domains, initially:
+Game identities normalize through Wabbajack's authoritative `GameRegistry` Nexus names. The checked-in mapping covers every current Wabbajack game definition, including nontrivial and shared domains such as:
 
 - `Skyrim` -> `skyrim`
 - `SkyrimSpecialEdition` -> `skyrimspecialedition`
-- `SkyrimVR` -> `skyrimspecialedition` only when the manifest's Nexus state actually names the SSE Nexus domain; otherwise preserve `skyrimvr` for future mapping review.
+- `SkyrimVR` -> `skyrimspecialedition`
+- `FalloutNewVegas` -> `newvegas`
+- `SevenDaysToDie` -> `7daystodie`
+- `DragonAgeOrigins` -> `dragonage`
+
+Games for which Wabbajack declares no Nexus name remain explicit no-domain entries. The normalizer never derives a Nexus slug from a game title or enum name.
 
 The normalizer rejects booleans, zero/negative IDs, numeric strings with junk, and unknown game identities.
 
@@ -112,3 +117,4 @@ The official Wabbajack registry validation itself runs regularly, but this proje
 [2] https://github.com/wabbajack-tools/mod-lists/blob/master/modlists.json
 [3] https://wiki.wabbajack.org/wabbajack_cdn_and_gallery_access/Adding%20a%20Custom%20Repository%20to%20Wabbajack.html
 [5] https://raw.githubusercontent.com/wabbajack-tools/wabbajack/main/Wabbajack.Downloaders.WabbajackCDN/WabbajackCDNDownloader.cs
+[6] https://github.com/wabbajack-tools/wabbajack/blob/af938fb980bb4bcd1f6c87542fae6cd34b5020ee/Wabbajack.DTOs/Game/GameRegistry.cs

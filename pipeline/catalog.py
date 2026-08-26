@@ -3,8 +3,6 @@ from __future__ import annotations
 from dataclasses import dataclass, replace
 from typing import Any
 
-SKYRIM_FAMILY = frozenset({"skyrim", "skyrimspecialedition", "skyrimvr"})
-
 
 @dataclass(frozen=True)
 class CatalogRecord:
@@ -22,10 +20,6 @@ class CatalogRecord:
     download_hash: str
     declared_archive_count: int | None
     raw: dict[str, Any]
-
-    @property
-    def in_skyrim_family(self) -> bool:
-        return self.game.lower() in SKYRIM_FAMILY
 
     @property
     def snapshot_key(self) -> tuple[str, str, str, str]:

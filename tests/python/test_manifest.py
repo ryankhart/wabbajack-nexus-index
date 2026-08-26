@@ -1,5 +1,6 @@
 import unittest
 
+import pipeline.manifest as manifest_module
 from pipeline.manifest import (
     extract_nexus_memberships,
     extract_nexus_memberships_with_diagnostics,
@@ -7,6 +8,59 @@ from pipeline.manifest import (
 
 
 class NexusMembershipTests(unittest.TestCase):
+    def test_covers_every_current_wabbajack_game_registry_nexus_mapping(self):
+        expected = {
+            "Morrowind": "morrowind",
+            "Oblivion": "oblivion",
+            "Fallout3": "fallout3",
+            "FalloutNewVegas": "newvegas",
+            "Skyrim": "skyrim",
+            "SkyrimSpecialEdition": "skyrimspecialedition",
+            "Fallout4": "fallout4",
+            "SkyrimVR": "skyrimspecialedition",
+            "Enderal": "enderal",
+            "EnderalSpecialEdition": "enderalspecialedition",
+            "Fallout4VR": "fallout4",
+            "DarkestDungeon": "darkestdungeon",
+            "Dishonored": "dishonored",
+            "Witcher": "witcher",
+            "Witcher3": "witcher3",
+            "StardewValley": "stardewvalley",
+            "KingdomComeDeliverance": "kingdomcomedeliverance",
+            "MechWarrior5Mercenaries": "mechwarrior5mercenaries",
+            "NoMansSky": "nomanssky",
+            "DragonAgeOrigins": "dragonage",
+            "DragonAge2": "dragonage2",
+            "DragonAgeInquisition": "dragonageinquisition",
+            "KerbalSpaceProgram": "kerbalspaceprogram",
+            "Terraria": None,
+            "Cyberpunk2077": "cyberpunk2077",
+            "Sims4": "thesims4",
+            "DragonsDogma": "dragonsdogma",
+            "KarrynsPrison": None,
+            "Valheim": "valheim",
+            "MountAndBlade2Bannerlord": "mountandblade2bannerlord",
+            "FinalFantasy7Remake": "finalfantasy7remake",
+            "BaldursGate3": "baldursgate3",
+            "Starfield": "starfield",
+            "SevenDaysToDie": "7daystodie",
+            "OblivionRemastered": "oblivionremastered",
+            "Fallout76": "fallout76",
+            "Fallout4London": "fallout4london",
+            "Warhammer40kDarktide": "warhammer40kdarktide",
+            "Kotor2": "kotor2",
+            "VtMB": "vampirebloodlines",
+            "KingdomComeDeliverance2": "kingdomcomedeliverance2",
+            "DragonsDogma2": "dragonsdogma2",
+            "NieRAutomata": "nierautomata",
+            "ModdingTools": "site",
+        }
+
+        self.assertEqual(
+            expected,
+            getattr(manifest_module, "WABBAJACK_NEXUS_DOMAINS", None),
+        )
+
     def test_accepts_only_authoritative_nexus_state_types(self):
         manifest = {
             "Archives": [
@@ -40,6 +94,38 @@ class NexusMembershipTests(unittest.TestCase):
         memberships = extract_nexus_memberships(manifest)
 
         self.assertEqual([1, 2], [item.mod_id for item in memberships])
+
+    def test_maps_wabbajack_games_to_authoritative_nexus_domains(self):
+        cases = [
+            ("FalloutNewVegas", "newvegas"),
+            ("DragonAgeOrigins", "dragonage"),
+            ("SevenDaysToDie", "7daystodie"),
+            ("Fallout4VR", "fallout4"),
+            ("VtMB", "vampirebloodlines"),
+            ("ModdingTools", "site"),
+            ("VAMPIREBLOODLINES", "vampirebloodlines"),
+        ]
+        manifest = {
+            "Archives": [
+                {
+                    "State": {
+                        "$type": "Nexus",
+                        "Game": game,
+                        "ModID": index,
+                        "FileID": index * 10,
+                    }
+                }
+                for index, (game, _) in enumerate(cases, start=1)
+            ]
+        }
+
+        result = extract_nexus_memberships_with_diagnostics(manifest)
+
+        self.assertEqual((), result.rejections)
+        self.assertEqual(
+            sorted((domain, index) for index, (_, domain) in enumerate(cases, start=1)),
+            [(item.game_domain, item.mod_id) for item in result.memberships],
+        )
 
     def test_deduplicates_files_from_the_same_nexus_mod_page(self):
         manifest = {

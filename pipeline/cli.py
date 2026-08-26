@@ -16,7 +16,9 @@ DEFAULT_REGISTRY_URL = (
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="python -m pipeline",
-        description="Build the Skyrim Wabbajack-to-Nexus membership index.",
+        description=(
+            "Build the Nexus membership index for all registered Wabbajack modlists."
+        ),
     )
     commands = parser.add_subparsers(dest="command", required=True)
     build = commands.add_parser("build", help="discover, index, store, and publish")

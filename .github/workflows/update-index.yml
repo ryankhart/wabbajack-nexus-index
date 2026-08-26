@@ -40,7 +40,7 @@ jobs:
           restore-keys: |
             wabbajack-state-${{ runner.os }}-
 
-      - name: Build current Skyrim index
+      - name: Build complete registered index
         run: >-
           python -m pipeline build
           --workers 6

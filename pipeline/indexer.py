@@ -79,8 +79,6 @@ def _index_record(
     ],
     stale_snapshots: Mapping[str, tuple[NexusMembership, ...]],
 ) -> IndexItem:
-    if not record.in_skyrim_family:
-        return IndexItem(record=record, status="excluded")
     if record.force_down:
         return IndexItem(
             record=record,

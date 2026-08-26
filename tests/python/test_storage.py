@@ -8,7 +8,11 @@ from unittest.mock import patch
 from pipeline import storage
 from pipeline.catalog import normalize_repository_payload
 from pipeline.indexer import index_catalog_records
-from pipeline.storage import load_verified_snapshots, write_index_run
+from pipeline.storage import (
+    load_latest_verified_memberships,
+    load_verified_snapshots,
+    write_index_run,
+)
 
 
 class StorageTests(unittest.TestCase):
@@ -162,6 +166,38 @@ class StorageTests(unittest.TestCase):
         self.assertEqual(
             [(current_parser_version,), (next_parser_version,)], parser_versions
         )
+
+    def test_all_game_parser_invalidates_skyrim_only_version_three_cache(self):
+        record = normalize_repository_payload(
+            repository_name="fixture",
+            repository_url="https://example.invalid/modlists.json",
+            payload={
+                "title": "All Game Parser Fixture",
+                "game": "falloutnewvegas",
+                "version": "1.0.0",
+                "links": {
+                    "machineURL": "AllGameParserFixture",
+                    "download": "https://cdn.example/AllGameParserFixture",
+                },
+                "download_metadata": {"Hash": "all-game-parser="},
+            },
+        )[0]
+        run = index_catalog_records(
+            [record],
+            read_manifest=lambda _: {"Archives": []},
+        )
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            database_path = Path(temp_dir) / "index.sqlite"
+            with patch("pipeline.storage.PARSER_VERSION", "3"):
+                write_index_run(
+                    database_path,
+                    run,
+                    generated_at="2026-08-25T00:00:00Z",
+                )
+
+            self.assertEqual({}, load_verified_snapshots(database_path))
+            self.assertEqual({}, load_latest_verified_memberships(database_path))
 
 
 if __name__ == "__main__":

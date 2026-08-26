@@ -7,7 +7,7 @@ import unittest
 from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 
-from pipeline.cli import main
+from pipeline.cli import _parser, main
 
 
 class FakeClient:
@@ -30,6 +30,12 @@ class FakeClient:
 
 
 class CliTests(unittest.TestCase):
+    def test_help_describes_the_complete_registered_index(self) -> None:
+        self.assertIn(
+            "all registered Wabbajack modlists",
+            _parser().format_help(),
+        )
+
     def test_build_command_prints_progress_and_json_summary(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

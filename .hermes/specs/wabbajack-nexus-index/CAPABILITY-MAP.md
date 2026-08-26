@@ -2,7 +2,7 @@
 
 | Module id | Responsibility | Depends on |
 |---|---|---|
-| `registry-ingestion` | Enumerate Wabbajack sources, extract current Skyrim-family manifests, normalize exact Nexus identities, and reconcile coverage | — |
+| `registry-ingestion` | Enumerate Wabbajack sources, extract every current registered manifest, normalize exact Nexus identities, and reconcile coverage | — |
 | `dataset-publication` | Preserve indexed history and emit deterministic, validated lookup artifacts with provenance and freshness | `registry-ingestion` |
 | `extension-surface` | Detect Nexus mod pages and render the matching Wabbajack lists in a resilient Chrome/Firefox UI | `dataset-publication` |
 

@@ -4,7 +4,7 @@ A local-first Chrome and Firefox extension plus reproducible data pipeline that 
 
 ## Status
 
-**Local verified development build available.** The current Skyrim-family catalog is reconciled, recurring runs reuse unchanged verified manifests, and Chrome/Firefox packages build from the same generated dataset. Browser-store release and public hosting remain intentionally deferred.
+**Local verified development build available.** The complete current registered catalog is reconciled, recurring runs reuse unchanged verified manifests, and Chrome/Firefox packages build from the same generated dataset. Browser-store release and public hosting remain intentionally deferred.
 
 ## Product contract
 
@@ -15,7 +15,7 @@ On a supported Nexus Mods mod page, the extension inserts a Wabbajack panel cont
 - an `Adult` label in red text only when Wabbajack classifies the list as NSFW;
 - generated-index timestamp for data freshness.
 
-The first supported games are Skyrim, Skyrim Special Edition, and Skyrim VR. More games are intentionally deferred.
+The pipeline indexes every registered Wabbajack list and the extension supports every authoritative Nexus game domain published from those manifests.
 
 ## Repository layout
 

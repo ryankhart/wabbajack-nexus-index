@@ -1,17 +1,76 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from types import MappingProxyType
 from typing import Any
 
-# Wabbajack GameRegistry is authoritative for Nexus page domains. In particular,
-# Game.SkyrimVR has NexusName "skyrimspecialedition" and NexusGameId 1704:
-# https://github.com/wabbajack-tools/wabbajack/blob/main/Wabbajack.DTOs/Game/GameRegistry.cs
+# Wabbajack GameRegistry is authoritative for Nexus page domains. Keep explicit
+# no-domain entries so a future inferred slug cannot silently create bad edges.
+# Snapshot: https://github.com/wabbajack-tools/wabbajack/blob/
+# af938fb980bb4bcd1f6c87542fae6cd34b5020ee/Wabbajack.DTOs/Game/GameRegistry.cs
+WABBAJACK_NEXUS_DOMAINS = MappingProxyType(
+    {
+        "Morrowind": "morrowind",
+        "Oblivion": "oblivion",
+        "Fallout3": "fallout3",
+        "FalloutNewVegas": "newvegas",
+        "Skyrim": "skyrim",
+        "SkyrimSpecialEdition": "skyrimspecialedition",
+        "Fallout4": "fallout4",
+        "SkyrimVR": "skyrimspecialedition",
+        "Enderal": "enderal",
+        "EnderalSpecialEdition": "enderalspecialedition",
+        "Fallout4VR": "fallout4",
+        "DarkestDungeon": "darkestdungeon",
+        "Dishonored": "dishonored",
+        "Witcher": "witcher",
+        "Witcher3": "witcher3",
+        "StardewValley": "stardewvalley",
+        "KingdomComeDeliverance": "kingdomcomedeliverance",
+        "MechWarrior5Mercenaries": "mechwarrior5mercenaries",
+        "NoMansSky": "nomanssky",
+        "DragonAgeOrigins": "dragonage",
+        "DragonAge2": "dragonage2",
+        "DragonAgeInquisition": "dragonageinquisition",
+        "KerbalSpaceProgram": "kerbalspaceprogram",
+        "Terraria": None,
+        "Cyberpunk2077": "cyberpunk2077",
+        "Sims4": "thesims4",
+        "DragonsDogma": "dragonsdogma",
+        "KarrynsPrison": None,
+        "Valheim": "valheim",
+        "MountAndBlade2Bannerlord": "mountandblade2bannerlord",
+        "FinalFantasy7Remake": "finalfantasy7remake",
+        "BaldursGate3": "baldursgate3",
+        "Starfield": "starfield",
+        "SevenDaysToDie": "7daystodie",
+        "OblivionRemastered": "oblivionremastered",
+        "Fallout76": "fallout76",
+        "Fallout4London": "fallout4london",
+        "Warhammer40kDarktide": "warhammer40kdarktide",
+        "Kotor2": "kotor2",
+        "VtMB": "vampirebloodlines",
+        "KingdomComeDeliverance2": "kingdomcomedeliverance2",
+        "DragonsDogma2": "dragonsdogma2",
+        "NieRAutomata": "nierautomata",
+        "ModdingTools": "site",
+    }
+)
+
 _GAME_DOMAINS = {
-    "skyrim": "skyrim",
-    "skyrimspecialedition": "skyrimspecialedition",
+    **{
+        game.casefold(): nexus_domain
+        for game, nexus_domain in WABBAJACK_NEXUS_DOMAINS.items()
+        if nexus_domain is not None
+    },
+    **{
+        nexus_domain.casefold(): nexus_domain
+        for nexus_domain in WABBAJACK_NEXUS_DOMAINS.values()
+        if nexus_domain is not None
+    },
+    # Retain exact legacy spellings observed in older Skyrim manifests.
     "skyrim special edition": "skyrimspecialedition",
     "skyrimse": "skyrimspecialedition",
-    "skyrimvr": "skyrimspecialedition",
     "skyrim vr": "skyrimspecialedition",
 }
 

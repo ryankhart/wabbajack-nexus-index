@@ -13,7 +13,7 @@ from .catalog import CatalogSourceResult
 from .indexer import IndexRun
 from .manifest import NexusMembership
 
-PARSER_VERSION = "3"
+PARSER_VERSION = "4"
 
 _SCHEMA = """
 CREATE TABLE IF NOT EXISTS metadata (
@@ -157,6 +157,8 @@ def load_latest_verified_memberships(
     try:
         with closing(sqlite3.connect(source)) as connection:
             connection.row_factory = sqlite3.Row
+            if _metadata_value(connection, "parser_version", "") != PARSER_VERSION:
+                return {}
             rows = connection.execute(
                 """
                 SELECT stable_id, game_domain, mod_id, file_ids_json

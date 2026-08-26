@@ -136,6 +136,19 @@ class RunUpdateTests(unittest.TestCase):
                     raise OSError("installer unavailable")
                 if url.endswith("/Malformed"):
                     raise ValueError("manifest is not a JSON object")
+                if url.endswith("/Other"):
+                    return {
+                        "Archives": [
+                            {
+                                "State": {
+                                    "$type": "Nexus",
+                                    "Game": "Fallout4",
+                                    "ModID": 99,
+                                    "FileID": 200,
+                                }
+                            }
+                        ]
+                    }
                 return {
                     "Archives": [
                         {
@@ -158,17 +171,12 @@ class RunUpdateTests(unittest.TestCase):
                 read_manifest=read_manifest,
             )
 
-            self.assertEqual(5, result.run.discovered)
+            self.assertEqual(6, result.run.discovered)
             self.assertEqual(6, len(result.discovery.records))
-            out_of_scope = next(
-                record for record in result.discovery.records if record.title == "Other Game"
-            )
-            self.assertEqual("fallout4", out_of_scope.game)
-            self.assertFalse(out_of_scope.in_skyrim_family)
             self.assertEqual(
                 {
                     "excluded": 1,
-                    "indexed": 1,
+                    "indexed": 2,
                     "malformed": 1,
                     "unavailable": 1,
                     "unsupported": 1,
@@ -180,6 +188,7 @@ class RunUpdateTests(unittest.TestCase):
                     "https://authored-files.wabbajack.org/Indexed",
                     "https://authored-files.wabbajack.org/Unavailable",
                     "https://authored-files.wabbajack.org/Malformed",
+                    "https://authored-files.wabbajack.org/Other",
                 ],
                 calls,
             )
@@ -199,6 +208,7 @@ class RunUpdateTests(unittest.TestCase):
                 {
                     "Indexed": "indexed",
                     "Malformed": "malformed",
+                    "Other Game": "indexed",
                     "Retired": "excluded",
                     "Unavailable": "unavailable",
                     "Unsupported": "unsupported",
@@ -210,9 +220,19 @@ class RunUpdateTests(unittest.TestCase):
             )
 
             coverage = json.loads((root / "published" / "coverage.json").read_text())
+            index_metadata = json.loads(
+                (root / "published" / "index-meta.json").read_text()
+            )
+            fallout_bucket = json.loads(
+                (root / "published" / "games" / "fallout4" / "0.json").read_text()
+            )
             self.assertEqual(1, coverage["sourceCounts"]["total"])
             self.assertEqual(0, coverage["sourceCounts"].get("fetch_error", 0))
             self.assertEqual("2026-08-25T20:00:00Z", coverage["generatedAt"])
+            self.assertEqual(
+                {"fallout4": [0], "skyrimspecialedition": [0]},
+                index_metadata["buckets"],
+            )
             coverage_items = {item["title"]: item for item in coverage["items"]}
             for title in ("Malformed", "Retired", "Unavailable", "Unsupported"):
                 item = coverage_items[title]
@@ -221,6 +241,7 @@ class RunUpdateTests(unittest.TestCase):
                 self.assertTrue(item["downloadUrl"])
                 self.assertTrue(item["status"])
                 self.assertTrue(item["error"])
+            self.assertEqual(["working/OtherGame"], fallout_bucket["mods"]["99"])
 
     def test_reuses_unchanged_verified_snapshot(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
