@@ -13,7 +13,7 @@ Build an exact, replayable index of Nexus mod-page membership for every current 
 - AC-ING-001: Given the official `repositories.json`, when discovery runs, then every named repository URL is fetched once and recorded with success or a terminal error.
 - AC-ING-002: Given repository payloads that are arrays or single objects, when parsed, then both forms produce normalized catalog records; any non-object entry or missing machine URL, version, or download hash makes that repository source a terminal error rather than silently dropping or collapsing the entry.
 - AC-ING-003: Given duplicate list/version records, when normalized, then `(repository_name, machine_url, version, download_hash)` is emitted once with all source provenance retained.
-- AC-ING-004: Given game values outside the configured Skyrim family, when v1 discovery runs, then they are recorded out of scope and are not manifested.
+- AC-ING-004: Given game values outside the configured Skyrim family, when v1 discovery runs, then they remain present in the discovery result with source provenance but are excluded from the in-scope index run, manifest acquisition, database, and publication.
 
 ### REQ-ING-002: Read Wabbajack manifests efficiently
 

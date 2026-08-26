@@ -34,11 +34,11 @@ DOM selectors remain adapter details and must be discovered/verified against the
 
 ### REQ-EXT-003: Show all matching Wabbajack lists
 
-- AC-EXT-008: Given N matching list IDs, then all N are available in the expanded panel, sorted by official status then title, with no silent display cap.
+- AC-EXT-008: Given N matching list IDs, then all N are available in the expanded panel, sorted by title, with no silent display cap.
 - AC-EXT-009: Each row shows linked list title, `<count> mods` in blue, and `NSFW` or `SFW` in red.
-- AC-EXT-010: Each row exposes the official Wabbajack gallery link; when present, the author-maintained README is a distinct secondary native link.
+- AC-EXT-010: Each row links its title to the official Wabbajack `/modlist/$repo/$id` resolver. Gallery and author README URLs remain distinct published metadata for future surfaces but are not required as additional row links in v1.
 - AC-EXT-011: The displayed count is clearly defined by tooltip/accessible text as unique Nexus mod pages indexed from the current Wabbajack manifest.
-- AC-EXT-012: Official, unofficial, maintenance, stale, and last-verified states remain distinguishable without using color alone.
+- AC-EXT-012: Given stale or otherwise non-indexed list metadata, then the list is not presented as a current membership. Any future status surface must use literal text rather than color alone.
 
 ### REQ-EXT-004: Handle empty, loading, and failure states
 

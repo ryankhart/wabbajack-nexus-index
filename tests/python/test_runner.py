@@ -159,6 +159,12 @@ class RunUpdateTests(unittest.TestCase):
             )
 
             self.assertEqual(5, result.run.discovered)
+            self.assertEqual(6, len(result.discovery.records))
+            out_of_scope = next(
+                record for record in result.discovery.records if record.title == "Other Game"
+            )
+            self.assertEqual("fallout4", out_of_scope.game)
+            self.assertFalse(out_of_scope.in_skyrim_family)
             self.assertEqual(
                 {
                     "excluded": 1,

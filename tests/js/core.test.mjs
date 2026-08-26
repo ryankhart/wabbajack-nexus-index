@@ -101,9 +101,16 @@ test("creates alphabetized rows with count, classification, and links", () => {
   ]);
 });
 
-test("drops stale lookup IDs and sanitizes unexpected classifications", () => {
+test("drops missing or non-indexed list IDs and sanitizes unexpected classifications", () => {
   assert.deepEqual(
-    createListRows(["missing", "repo/known"], {
+    createListRows(["missing", "repo/stale", "repo/known"], {
+      "repo/stale": {
+        title: "Stale",
+        nexusModCount: 4,
+        classification: "SFW",
+        wabbajackUrl: "https://www.wabbajack.org/modlist/repo/Stale",
+        status: "stale",
+      },
       "repo/known": {
         title: "Known",
         nexusModCount: 3,
