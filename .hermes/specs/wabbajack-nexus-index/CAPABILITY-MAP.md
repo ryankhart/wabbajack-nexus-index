@@ -4,7 +4,7 @@
 |---|---|---|
 | `registry-ingestion` | Enumerate Wabbajack sources, extract every current registered manifest, normalize exact Nexus identities, and reconcile coverage | — |
 | `dataset-publication` | Preserve indexed history and emit deterministic, validated lookup artifacts with provenance and freshness | `registry-ingestion` |
-| `extension-surface` | Detect Nexus mod pages and render the matching Wabbajack lists in a resilient Chrome/Firefox UI | `dataset-publication` |
+| `extension-surface` | Show matching Wabbajack lists on Nexus mod pages and add exact Nexus mod/file links to Wabbajack archive search results in a resilient Chrome/Firefox UI | `dataset-publication` |
 | `github-hosting` | Deliver immutable validated JSON snapshots through explicitly gated GitHub Pages deployment with packaged fallback | `dataset-publication`, `extension-surface` |
 
 Build order: `registry-ingestion` → `dataset-publication` → `extension-surface` → `github-hosting`.

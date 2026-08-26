@@ -2,7 +2,7 @@
 
 ## Objective
 
-Build a Chrome/Firefox extension and continually regenerated database that maps stable Nexus game/mod identifiers to every discoverable public Wabbajack list that contains that mod.
+Build Chrome/Firefox extensions and a continually regenerated database. On Nexus mod pages, show every discoverable public Wabbajack list that contains the mod being viewed. On Wabbajack archive search pages, link recognized Nexus entries directly to their exact mod and file pages.
 
 ## Established facts
 
@@ -50,6 +50,9 @@ Private lists, paywalled lists, Discord attachments without stable public URLs, 
 - Link to the official Wabbajack gallery and, when present, the list's author-maintained README.
 - Show a useful empty state and dataset freshness/coverage status.
 - Never block or break the Nexus page when data is unavailable.
+- Detect canonical Wabbajack archive search pages from the URL, not page text.
+- Link recognized Nexus mod names to their mod pages and archive filenames to their exact file pages.
+- Leave non-Nexus, malformed, unknown, and ambiguous archive entries unchanged; never guess from titles or filenames.
 
 ## Non-goals for v1
 

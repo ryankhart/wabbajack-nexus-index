@@ -13,7 +13,10 @@ Wabbajack registry
   -> deterministic JSON lookup shards + coverage report
   -> immutable GitHub Pages snapshot (when explicitly enabled)
   -> Chrome/Firefox background data transport
-  -> content script panel
+  -> Nexus Mods content script panel
+
+Wabbajack archive status reports
+  -> Wabbajack archive-link content script
 ```
 
 ## 1. Discovery layer
@@ -89,7 +92,7 @@ The extension background context:
 5. retries malformed, unavailable, inconsistent, or incompatible remote data against the packaged snapshot;
 6. returns data only and never loads remote executable content.
 
-The content script:
+The Nexus Mods content script:
 
 1. matches supported Nexus URL shapes;
 2. parses the game domain and mod ID from `location.pathname`;
@@ -98,6 +101,15 @@ The content script:
 5. renders with DOM APIs and `textContent` only;
 6. observes SPA navigation and remounts on identity change;
 7. leaves the Nexus page usable on timeout, schema mismatch, or missing data.
+
+The Wabbajack content script:
+
+1. matches canonical per-modlist archive-search routes;
+2. loads that list's published Wabbajack status report;
+3. accepts only authoritative Nexus downloader states with recognized games and positive integer mod/file IDs;
+4. links displayed mod names to exact Nexus mod pages and archive filenames to exact Nexus file pages;
+5. observes virtualized archive rows and enhances them idempotently as they appear;
+6. leaves non-Nexus, malformed, unknown, and ambiguous results unchanged rather than guessing from text.
 
 Links are native `<a>` elements with `target="_blank"` and `rel="noopener noreferrer"`. CSS is fully namespaced.
 
@@ -125,7 +137,7 @@ The official Wabbajack registry validation itself runs regularly, but this proje
 - No remote executable code.
 - No `innerHTML` with external data.
 - No browsing-history collection or telemetry in v1.
-- Host permissions limited to Nexus page matches and the configured static dataset origin.
+- Site access limited to supported Nexus mod pages, Wabbajack archive-search pages, and the configured static dataset origin.
 - Remote data origin limited to `https://ryankhart.github.io/*`.
 - Pages contains the compact public JSON projection only, never SQLite or acquisition caches.
 - Mod archives and installer patch blobs are not persisted in generated artifacts.

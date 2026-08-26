@@ -4,7 +4,7 @@ Module id: `extension-surface`
 
 ## Objective
 
-On supported Nexus Mods pages, add a native-looking, accessible panel showing every currently indexed Wabbajack list that contains the exact mod page.
+On supported Nexus Mods pages, add a native-looking, accessible panel showing every currently indexed Wabbajack list that contains the exact mod page. On canonical Wabbajack archive-search pages, add direct links from recognized Nexus entries to their exact Nexus mod and file pages.
 
 ## UI reference
 
@@ -122,7 +122,7 @@ Pure tests cover URL parsing, projection, ordering, and safe DOM construction. S
 
 ## Success Criteria
 
-Both browser packages and their development archives build reproducibly, load without errors, and, on a known indexed Nexus mod page, show the exact matching list set with required blue counts, red `Adult` text only for Wabbajack-classified NSFW lists, working official links, resilient accessible states, and a clearly unofficial identity using the approved supplied legible small-size mark.
+Both browser packages and their development archives build reproducibly and load without errors. On a known indexed Nexus mod page, they show the exact matching list set with required blue counts, red `Adult` text only for Wabbajack-classified NSFW lists, working official links, resilient accessible states, and a clearly unofficial identity using the approved supplied legible small-size mark. On a canonical Wabbajack archive-search page, they add exact Nexus mod and file links to recognized entries without changing ambiguous or non-Nexus entries.
 
 ## Resolved Decisions
 

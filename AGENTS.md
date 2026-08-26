@@ -2,7 +2,7 @@
 
 ## Mission
 
-Build and maintain a verifiable Skyrim-family Wabbajack-to-Nexus membership index and a resilient Chrome/Firefox extension that displays it on Nexus mod pages.
+Build and maintain a verified data pipeline and resilient Chrome/Firefox extensions that show which Wabbajack modlists include the Nexus mod being viewed and add exact Nexus mod/file links to Wabbajack archive search results.
 
 ## Hard invariants
 

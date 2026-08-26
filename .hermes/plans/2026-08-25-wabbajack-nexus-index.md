@@ -51,7 +51,7 @@ Checkpoint: a complete-for-frontier or honestly partial snapshot exists, with no
 - [ ] EXT-T7 (AC-EXT-024–028): RED manifest/popup identity and packaged-icon tests → replace borrowed branding with exact unofficial copy and the approved supplied Wabbajack-inspired mark, whitened in product CSS → verify 16/32/48/128-pixel rasters plus popup/panel screenshots → commit.
 - [ ] EXT-T8 (AC-EXT-029–033): RED exact Wabbajack route/Nexus-state/file-link tests → add an idempotent Wabbajack archive-search content script that enhances virtualized rows → verify focused DOM/build tests and the live TPF archive page → commit.
 
-Checkpoint: unpacked Chrome and Firefox builds work on fixture and live Nexus pages.
+Checkpoint: unpacked Chrome and Firefox builds work on fixture and live Nexus pages plus canonical Wabbajack archive-search pages.
 
 ## Phase 6 — Final delivery gate
 

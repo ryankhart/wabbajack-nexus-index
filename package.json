@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "license": "Apache-2.0",
-  "description": "A reproducible all-game Wabbajack membership index and Nexus Mods browser extension.",
+  "description": "See which Wabbajack modlists include a Nexus mod, right on its Nexus Mods page. The extension also adds direct Nexus Mods links to Wabbajack archive lists. Unofficial extensions for Chrome and Firefox.",
   "type": "module",
   "scripts": {
     "test:python": "python -m unittest discover -s tests/python -v",

@@ -25,7 +25,7 @@ function manifestFor(target) {
     name: "Unofficial Wabbajack-Nexus Index",
     version: "0.1.0",
     description:
-      "Unofficial, independent index of Wabbajack modlists for Nexus Mods pages; not affiliated with Wabbajack or Nexus Mods.",
+      "Shows which Wabbajack modlists include a Nexus mod and links archives to Nexus Mods. Independent, unofficial, and not affiliated.",
     homepage_url: "https://github.com/ryankhart/wabbajack-nexus-index",
     icons: {
       16: "assets/icon-16.png",

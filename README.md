@@ -1,6 +1,6 @@
 # Unofficial Wabbajack-Nexus Index
 
-A local-first Chrome and Firefox extension plus reproducible data pipeline that shows which indexed Wabbajack modlists include the Nexus Mods page currently being viewed.
+See which Wabbajack modlists include a Nexus mod, right on its Nexus Mods page. The extension also adds direct Nexus Mods links to Wabbajack archive lists. Unofficial extensions for Chrome and Firefox.
 
 ## Status
 
@@ -15,6 +15,8 @@ On a supported Nexus Mods mod page, the extension inserts a Wabbajack panel cont
 - an `Adult` label in red text only when Wabbajack classifies the list as NSFW;
 - generated-index timestamp and active data source for freshness/provenance.
 
+On a Wabbajack archive search page, the extension turns exact Nexus archive entries into direct links. The displayed mod name opens the Nexus mod page, and the archive filename opens the matching Nexus file page. Non-Nexus and ambiguous entries remain unchanged.
+
 The pipeline indexes every registered Wabbajack list and the extension supports every authoritative Nexus game domain published from those manifests.
 
 ## Repository layout
@@ -28,7 +30,7 @@ The pipeline indexes every registered Wabbajack list and the extension supports 
 
 ## Safety and independence
 
-This project is independent and is not affiliated with Nexus Mods or Wabbajack. It stores identifiers and list membership provenance, not mod archives. It does not require or collect Nexus API keys for normal browsing.
+This project is independent and is not affiliated with Nexus Mods or Wabbajack. It stores identifiers and records of which lists contain which mods, not mod archives. It does not require or collect Nexus API keys for normal browsing.
 
 ## Development commands
 

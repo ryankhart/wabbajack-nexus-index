@@ -58,8 +58,9 @@ test("builds minimally permissioned Chrome and Firefox packages with remote fall
     assert.equal(manifest.name, "Unofficial Wabbajack-Nexus Index");
     assert.equal(
       manifest.description,
-      "Unofficial, independent index of Wabbajack modlists for Nexus Mods pages; not affiliated with Wabbajack or Nexus Mods."
+      "Shows which Wabbajack modlists include a Nexus mod and links archives to Nexus Mods. Independent, unofficial, and not affiliated."
     );
+    assert.ok(manifest.description.length <= 132);
     assert.equal(
       manifest.homepage_url,
       "https://github.com/ryankhart/wabbajack-nexus-index"
