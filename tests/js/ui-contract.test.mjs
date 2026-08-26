@@ -71,6 +71,8 @@ test("shows four wide artwork cards at full width without horizontal scrolling",
 test("View all expands every card and Collapse restores the four-card preview", async () => {
   const content = await readFile(contentPath, "utf8");
 
+  assert.doesNotMatch(content, /Index updated/);
+  assert.doesNotMatch(content, /wjni-freshness/);
   assert.match(content, /viewToggle\.textContent = "View all"/);
   assert.match(content, /viewToggle\.setAttribute\("aria-expanded", "false"\)/);
   assert.match(content, /viewToggle\.setAttribute\("aria-controls", grid\.id\)/);

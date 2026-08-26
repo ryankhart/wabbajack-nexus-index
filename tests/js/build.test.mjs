@@ -31,6 +31,10 @@ test("builds permission-free Chrome and Firefox packages with bundled data", asy
     assert.equal(manifest.manifest_version, 3);
     assert.deepEqual(manifest.permissions ?? [], []);
     assert.deepEqual(manifest.host_permissions ?? [], []);
+    assert.deepEqual(manifest.action, {
+      default_popup: "popup.html",
+      default_title: "Wabbajack Nexus Index",
+    });
     assert.deepEqual(manifest.content_scripts[0].matches, [
       "https://www.nexusmods.com/*/mods/*",
       "https://next.nexusmods.com/*/mods/*",
@@ -49,6 +53,12 @@ test("builds permission-free Chrome and Firefox packages with bundled data", asy
       JSON.parse(await readFile(path.join(targetRoot, "data", "index-meta.json"))).bucketSize,
       1000
     );
+    assert.match(await readFile(path.join(targetRoot, "popup.html"), "utf8"), /popup\.js/);
+    assert.match(
+      await readFile(path.join(targetRoot, "popup.js"), "utf8"),
+      /data\/index-meta\.json/
+    );
+    assert.match(await readFile(path.join(targetRoot, "popup.css"), "utf8"), /\.popup/);
     const core = await readFile(path.join(targetRoot, "core.global.js"), "utf8");
     assert.doesNotMatch(core, /export function/);
     assert.match(core, /globalThis\.WJNI/);

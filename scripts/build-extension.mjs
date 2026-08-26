@@ -22,6 +22,10 @@ function manifestFor(target) {
     description:
       "Shows which Wabbajack modlists include the Nexus mod page you are viewing.",
     homepage_url: "https://www.wabbajack.org/",
+    action: {
+      default_popup: "popup.html",
+      default_title: "Wabbajack Nexus Index",
+    },
     content_scripts: [
       {
         matches: CONTENT_MATCHES,
@@ -68,15 +72,21 @@ export async function buildExtension({ sourceDir, dataDir, outputRoot }) {
     requireFile(path.join(resolvedSource, "core.mjs")),
     requireFile(path.join(resolvedSource, "content-entry.js")),
     requireFile(path.join(resolvedSource, "content.css")),
+    requireFile(path.join(resolvedSource, "popup.html")),
+    requireFile(path.join(resolvedSource, "popup.js")),
+    requireFile(path.join(resolvedSource, "popup.css")),
     requireFile(path.join(resolvedSource, "assets", "wabbajack-transparent.webp")),
     requireFile(path.join(resolvedData, "index-meta.json")),
     requireFile(path.join(resolvedData, "modlists.json")),
   ]);
 
-  const [core, content, css] = await Promise.all([
+  const [core, content, css, popupHtml, popupScript, popupCss] = await Promise.all([
     readFile(path.join(resolvedSource, "core.mjs"), "utf8"),
     readFile(path.join(resolvedSource, "content-entry.js"), "utf8"),
     readFile(path.join(resolvedSource, "content.css"), "utf8"),
+    readFile(path.join(resolvedSource, "popup.html"), "utf8"),
+    readFile(path.join(resolvedSource, "popup.js"), "utf8"),
+    readFile(path.join(resolvedSource, "popup.css"), "utf8"),
   ]);
   await rm(resolvedOutput, { recursive: true, force: true });
 
@@ -87,6 +97,9 @@ export async function buildExtension({ sourceDir, dataDir, outputRoot }) {
       writeFile(path.join(targetRoot, "core.global.js"), transformCore(core), "utf8"),
       writeFile(path.join(targetRoot, "content.js"), content, "utf8"),
       writeFile(path.join(targetRoot, "content.css"), css, "utf8"),
+      writeFile(path.join(targetRoot, "popup.html"), popupHtml, "utf8"),
+      writeFile(path.join(targetRoot, "popup.js"), popupScript, "utf8"),
+      writeFile(path.join(targetRoot, "popup.css"), popupCss, "utf8"),
       cp(path.join(resolvedSource, "assets"), path.join(targetRoot, "assets"), {
         recursive: true,
       }),

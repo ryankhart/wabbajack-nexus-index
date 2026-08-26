@@ -171,7 +171,7 @@
     body.append(text);
   }
 
-  function renderRows(panel, rows, generatedAt) {
+  function renderRows(panel, rows) {
     const body = panel.querySelector("[data-role='body']");
     body.className = "wjni-body";
     body.setAttribute("aria-busy", "false");
@@ -193,9 +193,6 @@
     introHeading.append(introIcon, introText);
     const introActions = document.createElement("div");
     introActions.className = "wjni-intro-actions";
-    const freshness = document.createElement("span");
-    freshness.className = "wjni-freshness";
-    freshness.textContent = generatedAt ? `Index updated ${generatedAt}` : "Bundled index";
 
     const grid = document.createElement("div");
     grid.id = `${PANEL_ID}-grid`;
@@ -277,8 +274,10 @@
       introActions.append(viewToggle);
     }
 
-    introActions.append(freshness);
-    intro.append(introHeading, introActions);
+    intro.append(introHeading);
+    if (introActions.childElementCount > 0) {
+      intro.append(introActions);
+    }
     renderCards(false);
     collectionShell.append(intro, grid);
     body.append(collectionShell);
@@ -301,7 +300,7 @@
     const bucket = api.bucketForMod(identity.modId, bucketSize);
     const availableBuckets = metadata.buckets?.[identity.gameDomain] || [];
     if (!availableBuckets.includes(bucket)) {
-      return { rows: [], generatedAt: metadata.generatedAt || "" };
+      return { rows: [] };
     }
     const [modlists, lookupBucket] = await Promise.all([
       loadModlists(),
@@ -310,7 +309,6 @@
     const stableIds = lookupBucket.mods?.[String(identity.modId)] || [];
     return {
       rows: api.createListRows(stableIds, modlists),
-      generatedAt: metadata.generatedAt || "",
     };
   }
 
@@ -358,7 +356,7 @@
           "empty"
         );
       } else {
-        renderRows(panel, result.rows, result.generatedAt);
+        renderRows(panel, result.rows);
       }
     } catch (error) {
       if (generation === renderGeneration && panel.isConnected) {

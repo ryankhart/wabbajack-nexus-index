@@ -1,0 +1,108 @@
+:root {
+  color-scheme: dark;
+  font-family: "Inter", "Inter Fallback", ui-sans-serif, system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  margin: 0;
+  background: #242429;
+  color: #f4f4f5;
+}
+
+.popup {
+  padding: 16px;
+}
+
+.popup-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.popup-logo {
+  display: block;
+  flex: 0 0 34px;
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  filter: grayscale(1) brightness(2.2) contrast(1.15);
+}
+
+.popup h1 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 650;
+  line-height: 20px;
+}
+
+.popup-header p {
+  margin: 2px 0 0;
+  color: #a1a1aa;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.popup-status {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.popup-label {
+  color: #a1a1aa;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+#index-updated {
+  color: #f4f4f5;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+}
+
+.popup-status[data-state="error"] #index-updated {
+  color: #f87171;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color-scheme: light;
+  }
+
+  body {
+    background: #fff;
+    color: #18181b;
+  }
+
+  .popup-logo {
+    filter: grayscale(1) brightness(0.45) contrast(1.2);
+  }
+
+  .popup-header p,
+  .popup-label {
+    color: #71717a;
+  }
+
+  .popup-status {
+    border-color: rgba(0, 0, 0, 0.12);
+    background: rgba(0, 0, 0, 0.04);
+  }
+
+  #index-updated {
+    color: #18181b;
+  }
+
+  .popup-status[data-state="error"] #index-updated {
+    color: #b91c1c;
+  }
+}
