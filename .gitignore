@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# Node
+node_modules/
+
+# Build outputs
+build/
+dist/
+*.zip
+
+# Generated and cached data
+data/cache/
+data/work/
+data/database.sqlite*
+data/generated/
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+# Test and editor artifacts
+.coverage
+.pytest_cache/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Hermes local citation ledger/cache
+.hermes/citations/
