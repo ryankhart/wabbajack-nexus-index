@@ -14,6 +14,7 @@ Build and maintain a verifiable Skyrim-family Wabbajack-to-Nexus membership inde
 6. Do not require, collect, or commit Nexus API keys.
 7. Use strict RED -> GREEN -> REFACTOR for behavioral code.
 8. Do not publish, push, create a remote, select a license, or submit to browser stores without Ryan's approval.
+9. Implement every feature and bug fix for both the Chrome and Firefox extensions, and keep both extensions in feature and behavior parity at all times.
 
 ## Canonical commands
 
