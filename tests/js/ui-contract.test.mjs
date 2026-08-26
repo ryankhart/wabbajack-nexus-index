@@ -89,6 +89,24 @@ test("matches Nexus collection cards and only labels adult modlists", async () =
   );
 });
 
+test("uses the bundled Wabbajack logo beside the inclusion heading", async () => {
+  const [content, css] = await Promise.all([
+    readFile(contentPath, "utf8"),
+    readFile(cssPath, "utf8"),
+  ]);
+
+  assert.match(content, /introIcon = document\.createElement\("img"\)/);
+  assert.match(
+    content,
+    /introIcon\.src = runtime\.getURL\("assets\/wabbajack-transparent\.webp"\)/
+  );
+  assert.doesNotMatch(content, /introIcon\.textContent = "◆"/);
+  assert.match(
+    css,
+    /\.wjni-intro-icon\s*\{[^}]*width:\s*20px;[^}]*height:\s*20px;[^}]*filter:\s*grayscale\(1\) invert\(1\) brightness\(0\.55\) contrast\(1\.2\);/s
+  );
+});
+
 test("uses Nexus translucent surfaces with color-mix fallbacks", async () => {
   const css = await readFile(cssPath, "utf8");
 
@@ -131,10 +149,35 @@ test("copies the native Nexus accordion layer hierarchy and bottom spacing", asy
   );
 });
 
+test("squares the native Collections bottom corners only while Wabbajack follows it", async () => {
+  const [content, css] = await Promise.all([
+    readFile(contentPath, "utf8"),
+    readFile(cssPath, "utf8"),
+  ]);
+
+  assert.match(
+    content,
+    /const COLLECTIONS_CONTINUATION_CLASS = "wjni-collections-continues"/
+  );
+  assert.match(
+    content,
+    /collectionsBody\.classList\.add\(COLLECTIONS_CONTINUATION_CLASS\)/
+  );
+  assert.match(
+    content,
+    /element\.classList\.remove\(COLLECTIONS_CONTINUATION_CLASS\)/
+  );
+  assert.match(
+    css,
+    /\.wjni-collections-continues\s*\{[^}]*border-bottom-left-radius:\s*0 !important;[^}]*border-bottom-right-radius:\s*0 !important;/s
+  );
+});
+
 test("relocates an existing panel when the Collections anchor hydrates late", async () => {
   const content = await readFile(contentPath, "utf8");
 
-  assert.match(content, /placePanel\(existing\);\s*}\s*return;/s);
+  assert.match(content, /placePanel\(existing\)/);
+  assert.match(content, /syncCollectionsContinuation\(existing\)/);
   assert.match(
     content,
     /MutationObserver\([\s\S]*collectionsAnchor[\s\S]*previousElementSibling !== collectionsAnchor[\s\S]*scheduleRender\(\)/

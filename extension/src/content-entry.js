@@ -4,6 +4,7 @@
   const PANEL_ID = "wjni-panel";
   const PREVIEW_LIMIT = 4;
   const COLLECTIONS_LABEL = "collections containing this mod";
+  const COLLECTIONS_CONTINUATION_CLASS = "wjni-collections-continues";
   const runtime = globalThis.chrome?.runtime || globalThis.browser?.runtime;
   const api = globalThis.WJNI;
   let lastRoute = "";
@@ -44,6 +45,36 @@
     return document.querySelector("dl.accordion");
   }
 
+  function findCollectionsBody() {
+    let fallback = null;
+    for (const host of document.querySelectorAll("collections-containing-mod")) {
+      const body = host.closest("dd");
+      if (!body) {
+        continue;
+      }
+      fallback ||= body;
+      const bounds = body.getBoundingClientRect();
+      if (bounds.width > 0 && bounds.height > 0) {
+        return body;
+      }
+    }
+    return fallback || findCollectionsAnchor()?.closest("dd") || null;
+  }
+
+  function clearCollectionsContinuation() {
+    for (const element of document.querySelectorAll(`.${COLLECTIONS_CONTINUATION_CLASS}`)) {
+      element.classList.remove(COLLECTIONS_CONTINUATION_CLASS);
+    }
+  }
+
+  function syncCollectionsContinuation(panel) {
+    const collectionsBody = findCollectionsBody();
+    clearCollectionsContinuation();
+    if (collectionsBody && panel.previousElementSibling === collectionsBody) {
+      collectionsBody.classList.add(COLLECTIONS_CONTINUATION_CLASS);
+    }
+  }
+
   function findFallbackAnchor() {
     const candidates = document.querySelectorAll("h1, h2, h3, main section");
     for (const candidate of candidates) {
@@ -55,9 +86,15 @@
   }
 
   function placePanel(panel) {
-    const accordion = findAccordionList();
+    const collectionsBody = findCollectionsBody();
+    const accordion = collectionsBody?.closest("dl.accordion") || findAccordionList();
     if (accordion) {
-      accordion.append(panel);
+      if (collectionsBody?.parentElement === accordion) {
+        collectionsBody.insertAdjacentElement("afterend", panel);
+      } else {
+        accordion.append(panel);
+      }
+      syncCollectionsContinuation(panel);
       return;
     }
     const anchor = findCollectionsAnchor() || findFallbackAnchor();
@@ -66,6 +103,7 @@
     } else {
       anchor.insertAdjacentElement("afterend", panel);
     }
+    syncCollectionsContinuation(panel);
   }
 
   function makeLink(url, label, className) {
@@ -136,10 +174,11 @@
     intro.className = "wjni-intro";
     const introHeading = document.createElement("div");
     introHeading.className = "wjni-intro-heading";
-    const introIcon = document.createElement("span");
+    const introIcon = document.createElement("img");
     introIcon.className = "wjni-intro-icon";
+    introIcon.src = runtime.getURL("assets/wabbajack-transparent.webp");
+    introIcon.alt = "";
     introIcon.setAttribute("aria-hidden", "true");
-    introIcon.textContent = "◆";
     const introText = document.createElement("strong");
     introText.textContent = `Included in ${rows.length} Wabbajack modlist${
       rows.length === 1 ? "" : "s"
@@ -259,17 +298,22 @@
     const existing = document.getElementById(PANEL_ID);
     if (!identity) {
       existing?.remove();
+      clearCollectionsContinuation();
       return;
     }
     const route = `${identity.gameDomain}:${identity.modId}`;
     if (existing && existing.dataset.route === route) {
       const accordion = findAccordionList();
+      const collectionsBody = findCollectionsBody();
       const collectionsAnchor = findCollectionsAnchor();
       if (
-        (accordion && existing.parentElement !== accordion) ||
+        (collectionsBody && existing.previousElementSibling !== collectionsBody) ||
+        (!collectionsBody && accordion && existing.parentElement !== accordion) ||
         (!accordion && collectionsAnchor && existing.previousElementSibling !== collectionsAnchor)
       ) {
         placePanel(existing);
+      } else {
+        syncCollectionsContinuation(existing);
       }
       return;
     }
@@ -321,10 +365,12 @@
     }
     const panel = document.getElementById(PANEL_ID);
     const accordion = findAccordionList();
+    const collectionsBody = findCollectionsBody();
     const collectionsAnchor = findCollectionsAnchor();
     if (
       !panel ||
-      (accordion && panel.parentElement !== accordion) ||
+      (collectionsBody && panel.previousElementSibling !== collectionsBody) ||
+      (!collectionsBody && accordion && panel.parentElement !== accordion) ||
       (!accordion && collectionsAnchor && panel.previousElementSibling !== collectionsAnchor)
     ) {
       scheduleRender();

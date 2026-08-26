@@ -36,6 +36,15 @@ test("builds permission-free Chrome and Firefox packages with bundled data", asy
       "https://next.nexusmods.com/*/mods/*",
     ]);
     assert.deepEqual(manifest.content_scripts[0].js, ["core.global.js", "content.js"]);
+    assert.ok(
+      manifest.web_accessible_resources[0].resources.includes("assets/*.webp"),
+      "the bundled logo must be readable from the injected page"
+    );
+    assert.ok(
+      (await readFile(path.join(targetRoot, "assets", "wabbajack-transparent.webp")))
+        .byteLength > 0,
+      "the built package must contain the Wabbajack logo"
+    );
     assert.equal(
       JSON.parse(await readFile(path.join(targetRoot, "data", "index-meta.json"))).bucketSize,
       1000

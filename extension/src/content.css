@@ -27,6 +27,11 @@
   box-sizing: border-box;
 }
 
+.wjni-collections-continues {
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
 .wjni-accordion-row {
   overflow: hidden;
   background: transparent;
@@ -109,8 +114,12 @@
 }
 
 .wjni-intro-icon {
-  color: #ee8b42;
-  font-size: 16px;
+  display: block;
+  flex: 0 0 20px;
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  filter: grayscale(1) invert(1) brightness(0.55) contrast(1.2);
 }
 
 .wjni-intro strong {

@@ -32,7 +32,7 @@ function manifestFor(target) {
     ],
     web_accessible_resources: [
       {
-        resources: ["data/*.json", "data/games/*/*.json"],
+        resources: ["assets/*.webp", "data/*.json", "data/games/*/*.json"],
         matches: CONTENT_MATCHES,
       },
     ],
@@ -68,6 +68,7 @@ export async function buildExtension({ sourceDir, dataDir, outputRoot }) {
     requireFile(path.join(resolvedSource, "core.mjs")),
     requireFile(path.join(resolvedSource, "content-entry.js")),
     requireFile(path.join(resolvedSource, "content.css")),
+    requireFile(path.join(resolvedSource, "assets", "wabbajack-transparent.webp")),
     requireFile(path.join(resolvedData, "index-meta.json")),
     requireFile(path.join(resolvedData, "modlists.json")),
   ]);
@@ -86,6 +87,9 @@ export async function buildExtension({ sourceDir, dataDir, outputRoot }) {
       writeFile(path.join(targetRoot, "core.global.js"), transformCore(core), "utf8"),
       writeFile(path.join(targetRoot, "content.js"), content, "utf8"),
       writeFile(path.join(targetRoot, "content.css"), css, "utf8"),
+      cp(path.join(resolvedSource, "assets"), path.join(targetRoot, "assets"), {
+        recursive: true,
+      }),
       writeFile(
         path.join(targetRoot, "manifest.json"),
         `${JSON.stringify(manifestFor(target), null, 2)}\n`,
