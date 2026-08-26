@@ -8,8 +8,6 @@
   let lastRoute = "";
   let renderGeneration = 0;
   let scheduled = false;
-  let metadataPromise;
-  let modlistsPromise;
 
   if (!runtime || !api) {
     return;
@@ -194,10 +192,11 @@
     return response.json();
   }
 
+  const loadMetadata = api.createRetryableLoader(() => fetchJson("data/index-meta.json"));
+  const loadModlists = api.createRetryableLoader(() => fetchJson("data/modlists.json"));
+
   async function lookup(identity) {
-    metadataPromise ||= fetchJson("data/index-meta.json");
-    modlistsPromise ||= fetchJson("data/modlists.json");
-    const metadata = await metadataPromise;
+    const metadata = await loadMetadata();
     const bucketSize = metadata.bucketSize;
     const bucket = api.bucketForMod(identity.modId, bucketSize);
     const availableBuckets = metadata.buckets?.[identity.gameDomain] || [];
@@ -205,7 +204,7 @@
       return { rows: [], generatedAt: metadata.generatedAt || "" };
     }
     const [modlists, lookupBucket] = await Promise.all([
-      modlistsPromise,
+      loadModlists(),
       fetchJson(`data/games/${identity.gameDomain}/${bucket}.json`),
     ]);
     const stableIds = lookupBucket.mods?.[String(identity.modId)] || [];
@@ -225,9 +224,11 @@
     }
     const route = `${identity.gameDomain}:${identity.modId}`;
     if (existing && existing.dataset.route === route) {
-      if (!findCollectionsAnchor() || existing.previousElementSibling === findCollectionsAnchor()) {
-        return;
+      const collectionsAnchor = findCollectionsAnchor();
+      if (collectionsAnchor && existing.previousElementSibling !== collectionsAnchor) {
+        placePanel(existing);
       }
+      return;
     }
 
     renderGeneration += 1;
@@ -271,7 +272,13 @@
   }
 
   const observer = new MutationObserver(() => {
-    if (!document.getElementById(PANEL_ID) && api.parseNexusModUrl(location.href)) {
+    const identity = api.parseNexusModUrl(location.href);
+    if (!identity) {
+      return;
+    }
+    const panel = document.getElementById(PANEL_ID);
+    const collectionsAnchor = findCollectionsAnchor();
+    if (!panel || (collectionsAnchor && panel.previousElementSibling !== collectionsAnchor)) {
       scheduleRender();
     }
   });

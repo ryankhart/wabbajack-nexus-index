@@ -30,6 +30,10 @@ test("builds permission-free Chrome and Firefox packages with bundled data", asy
     assert.equal(manifest.manifest_version, 3);
     assert.deepEqual(manifest.permissions ?? [], []);
     assert.deepEqual(manifest.host_permissions ?? [], []);
+    assert.deepEqual(manifest.content_scripts[0].matches, [
+      "https://www.nexusmods.com/*/mods/*",
+      "https://next.nexusmods.com/*/mods/*",
+    ]);
     assert.deepEqual(manifest.content_scripts[0].js, ["core.global.js", "content.js"]);
     assert.equal(
       JSON.parse(await readFile(path.join(targetRoot, "data", "index-meta.json"))).bucketSize,

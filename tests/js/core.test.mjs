@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 
 import {
   bucketForMod,
+  createRetryableLoader,
   createListRows,
   parseNexusModUrl,
 } from "../../extension/src/core.mjs";
@@ -22,6 +23,7 @@ test("parses canonical Nexus mod identity and ignores query/hash", () => {
 
 test("rejects non-detail pages, non-Nexus hosts, and malformed IDs", () => {
   for (const url of [
+    "https://nexusmods.com/skyrimspecialedition/mods/42",
     "https://www.nexusmods.com/skyrimspecialedition/mods/",
     "https://www.nexusmods.com/games/skyrimspecialedition/mods",
     "https://www.nexusmods.com/skyrimspecialedition/mods/42/files",
@@ -30,6 +32,21 @@ test("rejects non-detail pages, non-Nexus hosts, and malformed IDs", () => {
   ]) {
     assert.equal(parseNexusModUrl(url), null, url);
   }
+});
+
+test("retries a cached bundled-data load after a transient rejection", async () => {
+  let attempts = 0;
+  const load = createRetryableLoader(async () => {
+    attempts += 1;
+    if (attempts === 1) {
+      throw new Error("temporary read failure");
+    }
+    return { ready: true };
+  });
+
+  await assert.rejects(load(), /temporary read failure/);
+  assert.deepEqual(await load(), { ready: true });
+  assert.equal(attempts, 2);
 });
 
 test("computes the published bucket number", () => {

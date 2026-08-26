@@ -36,3 +36,13 @@ test("renders collection-style cards in a horizontally accessible rail", async (
   assert.match(css, /\.wjni-grid\s*\{[^}]*overflow-x:\s*auto;/s);
   assert.match(css, /\.wjni-card\s*\{[^}]*flex:\s*0 0/s);
 });
+
+test("relocates an existing panel when the Collections anchor hydrates late", async () => {
+  const content = await readFile(contentPath, "utf8");
+
+  assert.match(content, /placePanel\(existing\);\s*}\s*return;/s);
+  assert.match(
+    content,
+    /MutationObserver\([\s\S]*collectionsAnchor[\s\S]*previousElementSibling !== collectionsAnchor[\s\S]*scheduleRender\(\)/
+  );
+});

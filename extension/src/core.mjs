@@ -1,5 +1,4 @@
 const NEXUS_HOSTS = new Set([
-  "nexusmods.com",
   "www.nexusmods.com",
   "next.nexusmods.com",
 ]);
@@ -34,6 +33,22 @@ export function bucketForMod(modId, bucketSize) {
     throw new TypeError("bucketSize must be a positive safe integer");
   }
   return Math.floor(modId / bucketSize);
+}
+
+export function createRetryableLoader(load) {
+  if (typeof load !== "function") {
+    throw new TypeError("load must be a function");
+  }
+  let pending;
+  return () => {
+    pending ||= Promise.resolve()
+      .then(load)
+      .catch((error) => {
+        pending = undefined;
+        throw error;
+      });
+    return pending;
+  };
 }
 
 function safeHttpsUrl(value) {
