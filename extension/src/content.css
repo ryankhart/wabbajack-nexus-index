@@ -64,28 +64,20 @@
   flex: 1;
 }
 
-.wjni-chevron {
-  position: relative;
+.wjni-summary > .icon-arrow {
+  position: static;
   display: block;
-  flex: 0 0 22px;
-  width: 22px;
-  height: 22px;
-  margin-left: 12px;
-}
-
-.wjni-chevron .icon-arrow {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  display: block;
+  flex: 0 0 auto;
   width: 10px;
   height: 7px;
+  margin-left: 12px;
   fill: #fff;
-  transform: translate(-50%, -50%) rotate(180deg);
+  transform: rotate(180deg);
+  transform-origin: center;
 }
 
-.wjni-summary[aria-expanded="false"] .wjni-chevron .icon-arrow {
-  transform: translate(-50%, -50%);
+.wjni-summary[aria-expanded="false"] > .icon-arrow {
+  transform: none;
 }
 
 .wjni-body {

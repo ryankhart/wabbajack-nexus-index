@@ -126,25 +126,21 @@
 
     const button = document.createElement("button");
     button.type = "button";
-    button.className = "wjni-summary accopen";
+    button.className = "wjni-summary";
     button.setAttribute("aria-expanded", "true");
     const title = document.createElement("span");
     title.className = "wjni-summary-title";
     title.textContent = "Wabbajack modlists containing this mod";
-    const chevron = document.createElement("span");
-    chevron.className = "wjni-chevron acc-status";
+    const chevron = document.createElementNS(SVG_NAMESPACE, "svg");
+    chevron.setAttribute("class", "icon icon-arrow");
     chevron.setAttribute("aria-hidden", "true");
-    const chevronIcon = document.createElementNS(SVG_NAMESPACE, "svg");
-    chevronIcon.setAttribute("class", "icon icon-arrow");
     const chevronUse = document.createElementNS(SVG_NAMESPACE, "use");
-    chevronUse.setAttribute("href", "/assets/images/icons/icons.svg#icon-arrow");
     chevronUse.setAttributeNS(
       XLINK_NAMESPACE,
       "xlink:href",
       "/assets/images/icons/icons.svg#icon-arrow"
     );
-    chevronIcon.append(chevronUse);
-    chevron.append(chevronIcon);
+    chevron.append(chevronUse);
     button.append(title, chevron);
 
     const body = document.createElement("div");
@@ -158,7 +154,6 @@
     button.addEventListener("click", () => {
       const expanded = button.getAttribute("aria-expanded") === "true";
       button.setAttribute("aria-expanded", String(!expanded));
-      button.classList.toggle("accopen", !expanded);
       body.hidden = expanded;
     });
 

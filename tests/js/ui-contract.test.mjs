@@ -16,24 +16,26 @@ test("mounts a Nexus-native sibling accordion row with an accessible button", as
   assert.match(content, /button\.type = "button"/);
   assert.match(content, /setAttribute\("aria-expanded", "true"\)/);
   assert.match(content, /setAttribute\("aria-controls", body\.id\)/);
-  assert.match(content, /createElementNS\(SVG_NAMESPACE, "svg"\)/);
-  assert.match(content, /className = "wjni-chevron acc-status"/);
-  assert.match(content, /setAttribute\("class", "icon icon-arrow"\)/);
-  assert.match(content, /setAttribute\("href", "\/assets\/images\/icons\/icons\.svg#icon-arrow"\)/);
-  assert.match(content, /button\.classList\.toggle\("accopen", !expanded\)/);
+  assert.match(content, /const chevron = document\.createElementNS\(SVG_NAMESPACE, "svg"\)/);
+  assert.match(content, /chevron\.setAttribute\("class", "icon icon-arrow"\)/);
+  assert.match(
+    content,
+    /chevronUse\.setAttributeNS\([\s\S]*XLINK_NAMESPACE,[\s\S]*"xlink:href",[\s\S]*"\/assets\/images\/icons\/icons\.svg#icon-arrow"/
+  );
+  assert.doesNotMatch(content, /className = "wjni-chevron acc-status"/);
+  assert.doesNotMatch(content, /button\.classList\.toggle\("accopen"/);
   assert.doesNotMatch(content, /chevron\.textContent/);
   assert.match(content, /insertAdjacentElement\("afterend", panel\)/);
   assert.doesNotMatch(content, /createElement\("details"\)/);
   assert.doesNotMatch(content, /createElement\("summary"\)/);
   assert.match(css, /\.wjni-body\[hidden\]\s*\{[^}]*display:\s*none !important;/s);
-  assert.match(css, /\.wjni-chevron\s*\{[^}]*width:\s*22px;[^}]*height:\s*22px;/s);
   assert.match(
     css,
-    /\.wjni-chevron \.icon-arrow\s*\{[^}]*position:\s*absolute;[^}]*top:\s*50%;[^}]*left:\s*50%;[^}]*width:\s*10px;[^}]*height:\s*7px;[^}]*fill:\s*#fff;[^}]*transform:\s*translate\(-50%, -50%\) rotate\(180deg\);/s
+    /\.wjni-summary > \.icon-arrow\s*\{[^}]*width:\s*10px;[^}]*height:\s*7px;[^}]*fill:\s*#fff;[^}]*transform:\s*rotate\(180deg\);/s
   );
   assert.match(
     css,
-    /\.wjni-summary\[aria-expanded="false"\] \.wjni-chevron \.icon-arrow\s*\{[^}]*transform:\s*translate\(-50%, -50%\);/s
+    /\.wjni-summary\[aria-expanded="false"\] > \.icon-arrow\s*\{[^}]*transform:\s*none;/s
   );
 });
 
