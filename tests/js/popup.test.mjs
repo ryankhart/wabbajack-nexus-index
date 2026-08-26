@@ -43,7 +43,10 @@ test("identifies the extension as unofficial and independent", async () => {
   );
   assert.match(html, /src="assets\/icon-32\.png"/);
   assert.doesNotMatch(html, /wabbajack-transparent/);
-  assert.doesNotMatch(css, /\.popup-logo\s*\{[^}]*filter:/s);
+  assert.match(
+    css,
+    /\.popup-logo\s*\{[^}]*filter:\s*brightness\(0\) invert\(1\) drop-shadow\(0 0 1px rgba\(0, 0, 0, 0\.75\)\);/s
+  );
   assert.match(css, /body\s*\{[^}]*width:\s*360px;[^}]*max-width:\s*100vw;/s);
   assert.match(css, /\.popup-disclaimer\s*\{[^}]*overflow-wrap:\s*anywhere;/s);
 });

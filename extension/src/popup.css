@@ -34,6 +34,7 @@ body {
   height: 34px;
   object-fit: contain;
   image-rendering: auto;
+  filter: brightness(0) invert(1) drop-shadow(0 0 1px rgba(0, 0, 0, 0.75));
 }
 
 .popup h1 {

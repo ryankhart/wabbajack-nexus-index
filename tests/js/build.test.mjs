@@ -70,7 +70,7 @@ test("builds permission-free Chrome and Firefox packages with bundled data", asy
     assert.deepEqual(manifest.content_scripts[0].js, ["core.global.js", "content.js"]);
     assert.ok(
       manifest.web_accessible_resources[0].resources.includes("assets/*.png"),
-      "the original mark must be readable from the injected page"
+      "the packaged mark must be readable from the injected page"
     );
     assert.ok(
       !manifest.web_accessible_resources[0].resources.includes("assets/*.webp"),
@@ -85,6 +85,18 @@ test("builds permission-free Chrome and Firefox packages with bundled data", asy
       assert.equal(icon.readUInt32BE(16), size);
       assert.equal(icon.readUInt32BE(20), size);
     }
+    const suppliedMark = await readFile(path.join(targetRoot, "assets", "brand-mark.png"));
+    assert.ok(
+      suppliedMark.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])),
+      "the supplied source mark must ship as a PNG"
+    );
+    assert.equal(suppliedMark.readUInt32BE(16), 1254);
+    assert.equal(suppliedMark.readUInt32BE(20), 1254);
+    await assert.rejects(
+      readFile(path.join(targetRoot, "assets", "brand-mark.svg")),
+      /ENOENT/,
+      "the rejected generated mark must not ship"
+    );
     await assert.rejects(
       readFile(path.join(targetRoot, "assets", "wabbajack-transparent.webp")),
       /ENOENT/,

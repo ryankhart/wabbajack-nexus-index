@@ -117,7 +117,7 @@ test("matches Nexus collection cards and only labels adult modlists", async () =
   );
 });
 
-test("uses the original small-size mark beside the inclusion heading", async () => {
+test("uses the supplied white mark beside the inclusion heading", async () => {
   const [content, css] = await Promise.all([
     readFile(contentPath, "utf8"),
     readFile(cssPath, "utf8"),
@@ -133,7 +133,10 @@ test("uses the original small-size mark beside the inclusion heading", async () 
     css,
     /\.wjni-intro-icon\s*\{[^}]*width:\s*20px;[^}]*height:\s*20px;[^}]*image-rendering:\s*auto;/s
   );
-  assert.doesNotMatch(css, /\.wjni-intro-icon\s*\{[^}]*filter:/s);
+  assert.match(
+    css,
+    /\.wjni-intro-icon\s*\{[^}]*filter:\s*brightness\(0\) invert\(1\);/s
+  );
 });
 
 test("uses Nexus translucent surfaces with color-mix fallbacks", async () => {

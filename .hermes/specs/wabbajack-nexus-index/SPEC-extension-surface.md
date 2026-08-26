@@ -65,8 +65,8 @@ DOM selectors remain adapter details and must be discovered/verified against the
 - AC-EXT-024: Chrome and Firefox packages, toolbar labels, and popup headings use the exact product name `Unofficial Wabbajack-Nexus Index`.
 - AC-EXT-025: The manifest and popup plainly state that the extension is independent, unofficial, and not affiliated with or endorsed by Wabbajack or Nexus Mods.
 - AC-EXT-026: The manifest homepage targets `https://github.com/ryankhart/wabbajack-nexus-index`; creating or pushing that remote remains outside this change.
-- AC-EXT-027: The package uses an original magic-index mark at 16, 32, 48, and 128 pixels for browser and in-product identity, with no copied Wabbajack logo asset.
-- AC-EXT-028: The 16-pixel mark retains a distinct portal, wand, and spark silhouette on transparent, light, and dark surroundings.
+- AC-EXT-027: The package uses the approved supplied transparent Wabbajack-inspired mark at 16, 32, 48, and 128 pixels for browser and in-product identity; popup and panel CSS render the visible artwork white.
+- AC-EXT-028: The supplied silhouette remains recognizable and unclipped at the 16-pixel browser size and the 20/34-pixel in-product sizes, with sufficient contrast on light and dark surroundings.
 
 ## Non-Goals
 
@@ -110,7 +110,7 @@ Pure tests cover URL parsing, projection, ordering, and safe DOM construction. S
 
 ## Success Criteria
 
-Both browser packages load without errors and, on a known indexed Nexus mod page, show the exact matching list set with required blue counts, red `Adult` text only for Wabbajack-classified NSFW lists, working official links, resilient accessible states, and a clearly unofficial identity using an original legible small-size mark.
+Both browser packages load without errors and, on a known indexed Nexus mod page, show the exact matching list set with required blue counts, red `Adult` text only for Wabbajack-classified NSFW lists, working official links, resilient accessible states, and a clearly unofficial identity using the approved supplied legible small-size mark.
 
 ## Resolved Decisions
 
