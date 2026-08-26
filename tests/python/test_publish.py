@@ -1,3 +1,4 @@
+import hashlib
 import json
 import shutil
 import sqlite3
@@ -7,7 +8,7 @@ from contextlib import closing
 from pathlib import Path
 from unittest.mock import patch
 
-from pipeline.catalog import normalize_repository_payload
+from pipeline.catalog import CatalogSourceResult, normalize_repository_payload
 from pipeline.indexer import index_catalog_records
 from pipeline.publish import publish_dataset
 from pipeline.storage import write_index_run
@@ -52,7 +53,18 @@ class PublishDatasetTests(unittest.TestCase):
             root = Path(temp_dir)
             database_path = root / "index.sqlite"
             output_path = root / "published"
-            write_index_run(database_path, run, generated_at="2026-08-25T00:00:00Z")
+            write_index_run(
+                database_path,
+                run,
+                generated_at="2026-08-25T00:00:00Z",
+                catalog_sources={
+                    "fixture": CatalogSourceResult(
+                        repository_url="https://example.invalid/modlists.json",
+                        status="fetched",
+                        error="",
+                    )
+                },
+            )
             publish_dataset(
                 database_path,
                 output_path,
@@ -77,6 +89,23 @@ class PublishDatasetTests(unittest.TestCase):
         self.assertEqual(1, metadata["discovered"])
         self.assertEqual(1, metadata["indexed"])
         self.assertEqual({"skyrimspecialedition": [0]}, metadata["buckets"])
+        expected_source_set = (
+            json.dumps(
+                [
+                    {
+                        "repositoryName": "fixture",
+                        "repositoryUrl": "https://example.invalid/modlists.json",
+                    }
+                ],
+                sort_keys=True,
+                separators=(",", ":"),
+            )
+            + "\n"
+        ).encode("utf-8")
+        self.assertEqual(
+            hashlib.sha256(expected_source_set).hexdigest(),
+            metadata["sourceSetHash"],
+        )
         shard_hash = metadata["artifacts"]["games/skyrimspecialedition/0.json"]
         self.assertEqual(64, len(shard_hash))
 
@@ -184,13 +213,18 @@ class PublishDatasetTests(unittest.TestCase):
                     output_path,
                     generated_at="2026-08-26T00:00:00Z",
                 )
+                publish_dataset(
+                    database_path,
+                    output_path,
+                    generated_at="2026-08-27T00:00:00Z",
+                )
 
             metadata = json.loads(
                 (output_path / "index-meta.json").read_text("utf-8")
             )
             backup_exists = output_path.with_name("published.previous").exists()
 
-        self.assertEqual("2026-08-26T00:00:00Z", metadata["generatedAt"])
+        self.assertEqual("2026-08-27T00:00:00Z", metadata["generatedAt"])
         self.assertTrue(backup_exists)
 
 

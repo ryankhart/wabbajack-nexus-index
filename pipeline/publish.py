@@ -51,6 +51,16 @@ def _failed_candidate_path(output: Path, generated_at: str) -> Path:
     return candidate
 
 
+def _available_backup_path(output: Path) -> Path:
+    base = output.with_name(output.name + ".previous")
+    candidate = base
+    suffix = 1
+    while candidate.exists():
+        candidate = output.with_name(f"{base.name}.{suffix}")
+        suffix += 1
+    return candidate
+
+
 def publish_dataset(
     database_path: str | Path,
     output_path: str | Path,
@@ -94,6 +104,14 @@ def publish_dataset(
         }
         source_statuses = Counter(row["status"] for row in source_rows)
         source_counts = {"total": len(source_rows), **dict(sorted(source_statuses.items()))}
+        source_set = [
+            {
+                "repositoryName": row["repository_name"],
+                "repositoryUrl": row["repository_url"],
+            }
+            for row in source_rows
+        ]
+        source_set_hash = hashlib.sha256(_json_bytes(source_set)).hexdigest()
         modlists: dict[str, dict[str, Any]] = {}
         coverage_items: list[dict[str, Any]] = []
         for row in list_rows:
@@ -179,6 +197,7 @@ def publish_dataset(
             "bucketSize": _BUCKET_SIZE,
             "discovered": len(list_rows),
             "indexed": int(status_counts.get("indexed", 0)),
+            "sourceSetHash": source_set_hash,
             "statusCounts": status_counts,
             "buckets": published_buckets,
             "artifacts": dict(sorted(artifact_hashes.items())),
@@ -203,7 +222,10 @@ def publish_dataset(
             raise ValueError("publication membership references an unknown list")
 
         if backup.exists():
-            shutil.rmtree(backup)
+            try:
+                shutil.rmtree(backup)
+            except OSError:
+                backup = _available_backup_path(output)
         if output.exists():
             os.replace(output, backup)
         try:
