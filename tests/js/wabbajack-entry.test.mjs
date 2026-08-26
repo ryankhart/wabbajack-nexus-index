@@ -6,7 +6,7 @@ import { readFile } from "node:fs/promises";
 import {
   createNexusArchiveLinks,
   parseWabbajackArchiveSearchUrl,
-} from "../../extension/src/core.mjs";
+} from "../../extension/src/shared-core.mjs";
 
 const contentPath = new URL(
   "../../extension/src/wabbajack-entry.js",

@@ -8,7 +8,7 @@ import {
   createListRows,
   parseNexusModUrl,
   parseWabbajackArchiveSearchUrl,
-} from "../../extension/src/core.mjs";
+} from "../../extension/src/shared-core.mjs";
 
 test("parses canonical Nexus mod identity and ignores query/hash", () => {
   assert.deepEqual(

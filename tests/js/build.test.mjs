@@ -94,13 +94,28 @@ test("builds minimally permissioned Chrome and Firefox packages with remote fall
       "https://www.nexusmods.com/*",
       "https://next.nexusmods.com/*",
     ]);
-    assert.deepEqual(manifest.content_scripts[0].js, ["core.global.js", "content.js"]);
+    assert.deepEqual(manifest.content_scripts[0], {
+      matches: [
+        "https://www.nexusmods.com/*/mods/*",
+        "https://next.nexusmods.com/*/mods/*",
+      ],
+      js: ["shared-core.js", "nexusmods.js"],
+      css: ["nexusmods.css"],
+      run_at: "document_idle",
+    });
     assert.deepEqual(manifest.content_scripts[1], {
       matches: ["https://www.wabbajack.org/search/*"],
-      js: ["core.global.js", "wabbajack.js"],
+      js: ["shared-core.js", "wabbajack.js"],
       css: ["wabbajack.css"],
       run_at: "document_idle",
     });
+    for (const retiredName of ["core.global.js", "content.js", "content.css"]) {
+      await assert.rejects(
+        readFile(path.join(targetRoot, retiredName)),
+        /ENOENT/,
+        `${retiredName} must not survive the site-specific rename`
+      );
+    }
     assert.ok(
       manifest.web_accessible_resources[0].resources.includes("assets/*.png"),
       "the packaged mark must be readable from the injected page"
@@ -182,7 +197,7 @@ test("builds minimally permissioned Chrome and Firefox packages with remote fall
       await readFile(path.join(targetRoot, "wabbajack.css"), "utf8"),
       /\.wjni-archive-link/
     );
-    const core = await readFile(path.join(targetRoot, "core.global.js"), "utf8");
+    const core = await readFile(path.join(targetRoot, "shared-core.js"), "utf8");
     assert.doesNotMatch(core, /export function/);
     assert.match(core, /globalThis\.WJNI/);
     const context = { URL };
@@ -191,7 +206,7 @@ test("builds minimally permissioned Chrome and Firefox packages with remote fall
     assert.equal(
       typeof context.WJNI.createRetryableLoader,
       "function",
-      "the built API must expose every helper used by content.js"
+      "the built API must expose every helper used by nexusmods.js"
     );
     assert.equal(
       typeof context.WJNI.parseWabbajackArchiveSearchUrl,

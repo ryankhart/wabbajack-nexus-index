@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Nexus fixture — Wabbajack panel</title>
-  <link rel="stylesheet" href="/extension/src/content.css">
+  <link rel="stylesheet" href="/extension/src/nexusmods.css">
   <style>
     body { margin: 0; background: #1d1d22; color: #eee; font: 15px Arial, sans-serif; }
     main { max-width: 1020px; margin: 48px auto; }
@@ -33,7 +33,7 @@
     </section>
   </main>
   <script type="module">
-    import * as core from "/extension/src/core.mjs";
+    import * as core from "/extension/src/shared-core.mjs";
     globalThis.WJNI = Object.freeze({
       ...core,
       parseNexusModUrl: () => ({ gameDomain: "skyrimspecialedition", modId: 42 }),
@@ -41,7 +41,7 @@
     globalThis.chrome = {
       runtime: { getURL: (relative) => `/tests/fixtures/${relative}` },
     };
-    await import("/extension/src/content-entry.js");
+    await import("/extension/src/nexusmods-entry.js");
   </script>
 </body>
 </html>

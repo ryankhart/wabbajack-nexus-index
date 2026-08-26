@@ -8,9 +8,9 @@ import {
   createListRows,
   createRetryableLoader,
   parseNexusModUrl,
-} from "../../extension/src/core.mjs";
+} from "../../extension/src/shared-core.mjs";
 
-const contentPath = new URL("../../extension/src/content-entry.js", import.meta.url);
+const contentPath = new URL("../../extension/src/nexusmods-entry.js", import.meta.url);
 
 class FakeElement {
   constructor(tagName, ownerDocument) {
@@ -264,7 +264,7 @@ async function runContentScript(lookupFixture) {
   };
   context.globalThis = context;
 
-  vm.runInNewContext(source, context, { filename: "content-entry.js" });
+  vm.runInNewContext(source, context, { filename: "nexusmods-entry.js" });
   assert.equal(timers.length, 1, "initial render should be scheduled once");
   await timers.shift()();
 

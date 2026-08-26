@@ -9,11 +9,11 @@ import {
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const CONTENT_MATCHES = [
+const NEXUSMODS_MATCHES = [
   "https://www.nexusmods.com/*/mods/*",
   "https://next.nexusmods.com/*/mods/*",
 ];
-const RESOURCE_MATCHES = [
+const NEXUSMODS_RESOURCE_MATCHES = [
   "https://www.nexusmods.com/*",
   "https://next.nexusmods.com/*",
 ];
@@ -43,14 +43,14 @@ function manifestFor(target) {
     },
     content_scripts: [
       {
-        matches: CONTENT_MATCHES,
-        js: ["core.global.js", "content.js"],
-        css: ["content.css"],
+        matches: NEXUSMODS_MATCHES,
+        js: ["shared-core.js", "nexusmods.js"],
+        css: ["nexusmods.css"],
         run_at: "document_idle",
       },
       {
         matches: WABBAJACK_MATCHES,
-        js: ["core.global.js", "wabbajack.js"],
+        js: ["shared-core.js", "wabbajack.js"],
         css: ["wabbajack.css"],
         run_at: "document_idle",
       },
@@ -59,7 +59,7 @@ function manifestFor(target) {
     web_accessible_resources: [
       {
         resources: ["assets/*.png", "data/*.json", "data/games/*/*.json"],
-        matches: RESOURCE_MATCHES,
+        matches: NEXUSMODS_RESOURCE_MATCHES,
       },
     ],
   };
@@ -87,7 +87,7 @@ async function requireFile(filePath) {
   }
 }
 
-function transformCore(source) {
+function transformSharedCore(source) {
   const script = source.replace(/^export\s+/gm, "");
   return `${script}\n\nglobalThis.WJNI = Object.freeze({\n  parseNexusModUrl,\n  parseWabbajackArchiveSearchUrl,\n  createNexusArchiveLinks,\n  bucketForMod,\n  createRetryableLoader,\n  createListRows,\n});\n`;
 }
@@ -97,10 +97,10 @@ export async function buildExtension({ sourceDir, dataDir, outputRoot }) {
   const resolvedData = path.resolve(dataDir);
   const resolvedOutput = path.resolve(outputRoot);
   await Promise.all([
-    requireFile(path.join(resolvedSource, "core.mjs")),
+    requireFile(path.join(resolvedSource, "shared-core.mjs")),
     requireFile(path.join(resolvedSource, "background.js")),
-    requireFile(path.join(resolvedSource, "content-entry.js")),
-    requireFile(path.join(resolvedSource, "content.css")),
+    requireFile(path.join(resolvedSource, "nexusmods-entry.js")),
+    requireFile(path.join(resolvedSource, "nexusmods.css")),
     requireFile(path.join(resolvedSource, "wabbajack-entry.js")),
     requireFile(path.join(resolvedSource, "wabbajack.css")),
     requireFile(path.join(resolvedSource, "popup.html")),
@@ -114,20 +114,20 @@ export async function buildExtension({ sourceDir, dataDir, outputRoot }) {
   ]);
 
   const [
-    core,
+    sharedCore,
     background,
-    content,
-    css,
+    nexusmodsContent,
+    nexusmodsCss,
     wabbajackContent,
     wabbajackCss,
     popupHtml,
     popupScript,
     popupCss,
   ] = await Promise.all([
-    readFile(path.join(resolvedSource, "core.mjs"), "utf8"),
+    readFile(path.join(resolvedSource, "shared-core.mjs"), "utf8"),
     readFile(path.join(resolvedSource, "background.js"), "utf8"),
-    readFile(path.join(resolvedSource, "content-entry.js"), "utf8"),
-    readFile(path.join(resolvedSource, "content.css"), "utf8"),
+    readFile(path.join(resolvedSource, "nexusmods-entry.js"), "utf8"),
+    readFile(path.join(resolvedSource, "nexusmods.css"), "utf8"),
     readFile(path.join(resolvedSource, "wabbajack-entry.js"), "utf8"),
     readFile(path.join(resolvedSource, "wabbajack.css"), "utf8"),
     readFile(path.join(resolvedSource, "popup.html"), "utf8"),
@@ -142,10 +142,14 @@ export async function buildExtension({ sourceDir, dataDir, outputRoot }) {
     await mkdir(targetRoot, { recursive: true });
     await mkdir(targetDataRoot, { recursive: true });
     await Promise.all([
-      writeFile(path.join(targetRoot, "core.global.js"), transformCore(core), "utf8"),
+      writeFile(
+        path.join(targetRoot, "shared-core.js"),
+        transformSharedCore(sharedCore),
+        "utf8"
+      ),
       writeFile(path.join(targetRoot, "background.js"), background, "utf8"),
-      writeFile(path.join(targetRoot, "content.js"), content, "utf8"),
-      writeFile(path.join(targetRoot, "content.css"), css, "utf8"),
+      writeFile(path.join(targetRoot, "nexusmods.js"), nexusmodsContent, "utf8"),
+      writeFile(path.join(targetRoot, "nexusmods.css"), nexusmodsCss, "utf8"),
       writeFile(path.join(targetRoot, "wabbajack.js"), wabbajackContent, "utf8"),
       writeFile(path.join(targetRoot, "wabbajack.css"), wabbajackCss, "utf8"),
       writeFile(path.join(targetRoot, "popup.html"), popupHtml, "utf8"),

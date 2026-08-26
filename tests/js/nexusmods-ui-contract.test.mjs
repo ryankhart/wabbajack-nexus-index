@@ -2,8 +2,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
-const contentPath = new URL("../../extension/src/content-entry.js", import.meta.url);
-const cssPath = new URL("../../extension/src/content.css", import.meta.url);
+const contentPath = new URL("../../extension/src/nexusmods-entry.js", import.meta.url);
+const cssPath = new URL("../../extension/src/nexusmods.css", import.meta.url);
 
 test("mounts a Nexus-native sibling accordion row with an accessible button", async () => {
   const [content, css] = await Promise.all([

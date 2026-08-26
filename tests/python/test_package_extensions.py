@@ -26,7 +26,7 @@ class PackageExtensionsTests(unittest.TestCase):
                 }
                 files = {
                     "manifest.json": (json.dumps(manifest) + "\n").encode(),
-                    "content.js": b"globalThis.fixture = true;\n",
+                    "nexusmods.js": b"globalThis.fixture = true;\n",
                     "assets/icon.png": b"fixture-png-bytes",
                 }
                 for relative_path, contents in files.items():
