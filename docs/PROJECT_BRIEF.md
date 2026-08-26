@@ -46,7 +46,7 @@ Private lists, paywalled lists, Discord attachments without stable public URLs, 
 - Insert one idempotent, accessible panel near the mod header/content area.
 - Show matching Wabbajack list names as native links.
 - Show each list's unique Nexus mod-page count in blue.
-- Show `NSFW`/`SFW` in red, preserving Wabbajack's own classification rather than inferring it from individual mods.
+- Show `Adult` in red only for lists Wabbajack classifies as NSFW; show no classification label for non-NSFW lists and never infer it from individual mods.
 - Link to the official Wabbajack gallery and, when present, the list's author-maintained README.
 - Show a useful empty state and dataset freshness/coverage status.
 - Never block or break the Nexus page when data is unavailable.

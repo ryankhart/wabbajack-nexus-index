@@ -12,7 +12,7 @@ The provided Nexus screenshot establishes the target placement and hierarchy:
 
 - insert a new accordion row directly after the existing `Collections containing this mod` section when that section exists;
 - title it `Wabbajack modlists containing this mod`;
-- use the existing full-width dark accordion/card rhythm, compact list cards, white primary text, blue count text, and red classification text;
+- use the existing full-width dark accordion/card rhythm and match Nexus's compact Collection card typography, spacing, icon geometry, surfaces, and four-column layout;
 - do not modify, nest inside, or intercept Nexus's existing collection cards or links.
 
 DOM selectors remain adapter details and must be discovered/verified against the live page; no selector is inferred from the screenshot alone.
@@ -35,7 +35,7 @@ DOM selectors remain adapter details and must be discovered/verified against the
 ### REQ-EXT-003: Show all matching Wabbajack lists
 
 - AC-EXT-008: Given N matching list IDs, then all N are available in the expanded panel, sorted by title, with no silent display cap.
-- AC-EXT-009: Each row shows linked list title, `<count> mods` in blue, and `NSFW` or `SFW` in red.
+- AC-EXT-009: Each row shows linked list title and `<count> mods` in blue. Lists classified `NSFW` by Wabbajack additionally show `Adult` in red; non-NSFW lists show no classification label.
 - AC-EXT-010: Each row links its title to the official Wabbajack `/modlist/$repo/$id` resolver. Gallery and author README URLs remain distinct published metadata for future surfaces but are not required as additional row links in v1.
 - AC-EXT-011: The displayed count is clearly defined by tooltip/accessible text as unique Nexus mod pages indexed from the current Wabbajack manifest.
 - AC-EXT-012: Given stale or otherwise non-indexed list metadata, then the list is not presented as a current membership. Any future status surface must use literal text rather than color alone.
@@ -101,7 +101,7 @@ Pure tests cover URL parsing, projection, ordering, and safe DOM construction. S
 
 ## Success Criteria
 
-Both browser packages load without errors and, on a known indexed Nexus mod page, show the exact matching list set with required blue counts, red NSFW/SFW text, working official links, and resilient accessible states.
+Both browser packages load without errors and, on a known indexed Nexus mod page, show the exact matching list set with required blue counts, red `Adult` text only for Wabbajack-classified NSFW lists, working official links, and resilient accessible states.
 
 ## Resolved Decisions
 

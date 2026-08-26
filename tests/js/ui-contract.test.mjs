@@ -59,6 +59,30 @@ test("View all expands every card and Collapse restores the four-card preview", 
   assert.match(content, /viewToggle\.textContent = expanded \? "Collapse" : "View all"/);
 });
 
+test("matches Nexus collection cards and only labels adult modlists", async () => {
+  const [content, css] = await Promise.all([
+    readFile(contentPath, "utf8"),
+    readFile(cssPath, "utf8"),
+  ]);
+
+  assert.match(content, /if \(row\.classification === "NSFW"\)/);
+  assert.match(content, /classification\.textContent = "Adult"/);
+  assert.doesNotMatch(content, /classification\.textContent = row\.classification/);
+  assert.match(
+    css,
+    /\.wjni-card\s*\{[^}]*height:\s*56px;[^}]*padding:\s*8px;[^}]*background:\s*rgba\(255, 255, 255, 0\.1\);[^}]*border:\s*0;[^}]*border-radius:\s*4px;/s
+  );
+  assert.match(css, /\.wjni-card-icon\s*\{[^}]*width:\s*40px;[^}]*height:\s*40px;/s);
+  assert.match(
+    css,
+    /\.wjni-title\s*\{[^}]*font-family:\s*"Inter"[^;]*;[^}]*font-size:\s*14px;[^}]*font-weight:\s*300 !important;[^}]*line-height:\s*20px;/s
+  );
+  assert.match(
+    css,
+    /\.wjni-mod-count\s*\{[^}]*font-size:\s*12px;[^}]*font-weight:\s*300;[^}]*line-height:\s*16px;/s
+  );
+});
+
 test("relocates an existing panel when the Collections anchor hydrates late", async () => {
   const content = await readFile(contentPath, "utf8");
 

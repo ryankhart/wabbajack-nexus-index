@@ -154,6 +154,8 @@
     const grid = document.createElement("div");
     grid.id = `${PANEL_ID}-grid`;
     grid.className = "wjni-grid";
+    const collectionShell = document.createElement("div");
+    collectionShell.className = "wjni-collection-shell";
 
     function createCard(row) {
       const card = document.createElement("article");
@@ -180,17 +182,17 @@
       modCount.className = "wjni-mod-count";
       modCount.textContent = `${row.modCount.toLocaleString()} mods`;
       modCount.title = "Unique Nexus mod pages indexed from the current Wabbajack manifest";
-      const separator = document.createElement("span");
-      separator.className = "wjni-separator";
-      separator.textContent = "•";
-      const classification = document.createElement("span");
-      classification.className = "wjni-classification";
-      classification.textContent = row.classification;
-      classification.setAttribute(
-        "aria-label",
-        `Wabbajack classification: ${row.classification}`
-      );
-      facts.append(modCount, separator, classification);
+      facts.append(modCount);
+      if (row.classification === "NSFW") {
+        const separator = document.createElement("span");
+        separator.className = "wjni-separator";
+        separator.textContent = "•";
+        const classification = document.createElement("span");
+        classification.className = "wjni-classification";
+        classification.textContent = "Adult";
+        classification.setAttribute("aria-label", "Adult Wabbajack modlist");
+        facts.append(separator, classification);
+      }
       copy.append(name, facts);
       card.append(icon, copy);
       return card;
@@ -220,7 +222,8 @@
     introActions.append(freshness);
     intro.append(introHeading, introActions);
     renderCards(false);
-    body.append(intro, grid);
+    collectionShell.append(intro, grid);
+    body.append(collectionShell);
   }
 
   async function fetchJson(relativePath) {

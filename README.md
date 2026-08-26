@@ -12,7 +12,7 @@ On a supported Nexus Mods mod page, the extension will insert a Wabbajack panel 
 
 - linked modlist title;
 - unique Nexus mod-page count in blue text;
-- `NSFW` or `SFW` classification in red text;
+- an `Adult` label in red text only when Wabbajack classifies the list as NSFW;
 - generated-index timestamp for data freshness.
 
 The first supported games are Skyrim, Skyrim Special Edition, and Skyrim VR. More games are intentionally deferred.
