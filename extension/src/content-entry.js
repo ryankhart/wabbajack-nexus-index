@@ -12,6 +12,7 @@
   let lastRoute = "";
   let renderGeneration = 0;
   let scheduled = false;
+  let omittedRoute = "";
 
   if (!runtime || !api) {
     return;
@@ -350,11 +351,9 @@
         return;
       }
       if (result.rows.length === 0) {
-        renderMessage(
-          panel,
-          "No indexed Wabbajack modlist currently includes this Nexus mod.",
-          "empty"
-        );
+        omittedRoute = route;
+        panel.remove();
+        clearCollectionsContinuation();
       } else {
         renderRows(panel, result.rows);
       }
@@ -384,6 +383,10 @@
       return;
     }
     const panel = document.getElementById(PANEL_ID);
+    const route = `${identity.gameDomain}:${identity.modId}`;
+    if (!panel && route === omittedRoute) {
+      return;
+    }
     const accordion = findAccordionList();
     const collectionsBody = findCollectionsBody();
     const collectionsAnchor = findCollectionsAnchor();

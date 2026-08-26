@@ -43,8 +43,8 @@ DOM selectors remain adapter details and must be discovered/verified against the
 ### REQ-EXT-004: Handle empty, loading, and failure states
 
 - AC-EXT-013: While loading, the shell renders immediately with `aria-busy=true` and a polite status message.
-- AC-EXT-014: Given no matching memberships in a complete fresh snapshot, then the panel says no indexed Wabbajack lists include this mod and names dataset freshness.
-- AC-EXT-015: Given partial/stale coverage, missing bucket, network error, timeout, or schema mismatch, then the panel remains mounted with a concise retryable error and never claims true absence.
+- AC-EXT-014: Given no matching memberships in a complete fresh snapshot, including a range omitted from the bucket manifest because it contains no memberships, then the entire `Wabbajack modlists containing this mod` section is omitted and any temporary loading shell is removed.
+- AC-EXT-015: Given partial/stale coverage, an advertised bucket that is missing or unreadable, network error, timeout, or schema mismatch, then the panel remains mounted with a concise retryable error and never claims true absence.
 - AC-EXT-016: A failed lookup does not prevent Nexus controls or content from working.
 
 ### REQ-EXT-005: Work in Chrome and Firefox
