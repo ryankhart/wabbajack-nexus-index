@@ -29,8 +29,8 @@
 
 .wjni-accordion-row {
   overflow: hidden;
-  background: var(--wjni-bg);
-  border-bottom: 1px solid var(--wjni-border);
+  background: transparent;
+  border: 0;
 }
 
 .wjni-summary {
@@ -39,9 +39,10 @@
   justify-content: space-between;
   min-height: 44px;
   width: 100%;
-  padding: 11px 12px;
+  padding: 12px;
+  margin-bottom: 1px;
   border: 0;
-  background: transparent;
+  background: rgba(255, 255, 255, 0.05);
   color: var(--wjni-text);
   font: inherit;
   font-weight: 700;
@@ -51,7 +52,7 @@
 
 .wjni-summary:hover,
 .wjni-summary:focus-visible {
-  background: rgba(255, 255, 255, 0.035);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .wjni-summary-title {
@@ -71,6 +72,8 @@
 }
 
 .wjni-body {
+  display: flow-root;
+  margin-bottom: 1px;
   padding: 20px 20px 0;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 0 0 4px 4px;

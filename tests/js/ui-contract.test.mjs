@@ -109,6 +109,28 @@ test("uses Nexus translucent surfaces with color-mix fallbacks", async () => {
   );
 });
 
+test("copies the native Nexus accordion layer hierarchy and bottom spacing", async () => {
+  const css = await readFile(cssPath, "utf8");
+
+  assert.match(
+    css,
+    /\.wjni-accordion-row\s*\{[^}]*background:\s*transparent;[^}]*border:\s*0;/s
+  );
+  assert.match(
+    css,
+    /\.wjni-summary\s*\{[^}]*padding:\s*12px;[^}]*margin-bottom:\s*1px;[^}]*background:\s*rgba\(255, 255, 255, 0\.05\);/s
+  );
+  assert.match(
+    css,
+    /\.wjni-body\s*\{[^}]*margin-bottom:\s*1px;[^}]*padding:\s*20px 20px 0;[^}]*background:\s*rgba\(255, 255, 255, 0\.1\);/s
+  );
+  assert.match(css, /\.wjni-body\s*\{[^}]*display:\s*flow-root;/s);
+  assert.match(
+    css,
+    /\.wjni-collection-shell\s*\{[^}]*margin-bottom:\s*20px;[^}]*padding:\s*12px;[^}]*background:\s*var\(--wjni-surface-translucent-low\);/s
+  );
+});
+
 test("relocates an existing panel when the Collections anchor hydrates late", async () => {
   const content = await readFile(contentPath, "utf8");
 
