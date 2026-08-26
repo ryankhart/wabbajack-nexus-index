@@ -4,7 +4,7 @@ A local-first Chrome and Firefox extension plus reproducible data pipeline that 
 
 ## Status
 
-**In active development.** The data path has been proven against a real Wabbajack CDN installer, but the extension and full catalog build are not yet release-ready.
+**Local verified development build available.** The current Skyrim-family catalog is reconciled, recurring runs reuse unchanged verified manifests, and Chrome/Firefox packages build from the same generated dataset. Browser-store release and public hosting remain intentionally deferred.
 
 ## Product contract
 
@@ -13,7 +13,7 @@ On a supported Nexus Mods mod page, the extension will insert a Wabbajack panel 
 - linked modlist title;
 - unique Nexus mod-page count in blue text;
 - `NSFW` or `SFW` classification in red text;
-- source/coverage status and last-indexed time when data is incomplete or stale.
+- generated-index timestamp for data freshness.
 
 The first supported games are Skyrim, Skyrim Special Edition, and Skyrim VR. More games are intentionally deferred.
 
@@ -32,14 +32,17 @@ This project is independent and is not affiliated with Nexus Mods or Wabbajack. 
 
 ## Development commands
 
-Commands will become canonical as the first vertical slices land:
-
 ```text
 Python tests: python -m unittest discover -s tests/python -v
-Node tests:   npm test
+Node tests:   npm run test:js
 Build:        npm run build
-Index:        python -m pipeline build --game skyrimspecialedition
+Full verify:  npm run verify
+Index:        python -m pipeline build --workers 6
 ```
+
+## Local Firefox testing
+
+The ignored local development package is written to `artifacts/wabbajack-nexus-index-firefox-dev.xpi`. In Firefox, open `about:debugging#/runtime/this-firefox`, choose **Load Temporary Add-on…**, and select that file. Temporary add-ons are removed when Firefox exits; a normal persistent install requires Mozilla signing.
 
 See [docs/PROJECT_BRIEF.md](docs/PROJECT_BRIEF.md) and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 

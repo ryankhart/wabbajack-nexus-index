@@ -18,7 +18,7 @@ Preserve auditable list snapshots and publish a compact, deterministic, last-kno
 
 - AC-DATA-004: Given a list with many Nexus file IDs from one mod page, then `nexus_mod_count` equals distinct `(game_domain, mod_id)` values.
 - AC-DATA-005: Given Wabbajack `nsfw=true`, then the published list label is `NSFW`; given false, it is `SFW`; unknown is preserved rather than guessed.
-- AC-DATA-006: Given repository name and machine URL, then a stable list ID and official gallery URL plus author README URL are published separately.
+- AC-DATA-006: Given repository name and machine URL, then a stable list ID, the official Wabbajack `/modlist/$repo/$id` resolver URL, the gallery URL, and the author README URL are published separately.
 
 ### REQ-DATA-003: Emit deterministic lookup artifacts
 

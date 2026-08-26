@@ -103,6 +103,6 @@ Pure tests cover URL parsing, projection, ordering, and safe DOM construction. S
 
 Both browser packages load without errors and, on a known indexed Nexus mod page, show the exact matching list set with required blue counts, red NSFW/SFW text, working official links, and resilient accessible states.
 
-## Open Questions
+## Resolved Decisions
 
-Wabbajack currently exposes a durable official gallery URL, but a stable per-list web-page route has not been verified. Until one is proven, the product must label the official gallery link honestly and expose the list README separately rather than inventing a per-list URL.
+Wabbajack's official site defines the route `/modlist/$repo/$id` in `src/routes/modlist.$repo.$id.tsx`. It resolves the exact repository/machine pair, renders the list page when the README can be embedded, and otherwise redirects to the catalog-provided README. The extension may therefore use that official resolver for each list while preserving the gallery and raw README as distinct links.

@@ -1,0 +1,20 @@
+{
+  "featured/Alpha": {
+    "title": "Alpha List",
+    "nexusModCount": 1247,
+    "classification": "SFW",
+    "wabbajackUrl": "https://www.wabbajack.org/modlist/featured/Alpha",
+    "galleryUrl": "https://www.wabbajack.org/#/modlists/gallery",
+    "readmeUrl": "https://example.test/alpha",
+    "status": "indexed"
+  },
+  "community/Beta": {
+    "title": "Beta After Dark",
+    "nexusModCount": 889,
+    "classification": "NSFW",
+    "wabbajackUrl": "https://www.wabbajack.org/modlist/community/Beta",
+    "galleryUrl": "https://www.wabbajack.org/#/modlists/gallery",
+    "readmeUrl": "https://example.test/beta",
+    "status": "indexed"
+  }
+}

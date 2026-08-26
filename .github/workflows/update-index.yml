@@ -1,0 +1,63 @@
+name: Update Wabbajack index
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */4 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wabbajack-index-update
+  cancel-in-progress: false
+
+jobs:
+  build-index:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Restore durable index state
+        uses: actions/cache@v4
+        with:
+          path: |
+            data/cache/http
+            data/generated/database.sqlite
+          key: wabbajack-state-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            wabbajack-state-${{ runner.os }}-
+
+      - name: Build current Skyrim index
+        run: >-
+          python -m pipeline build
+          --workers 6
+          --database data/generated/database.sqlite
+          --output data/generated/public
+
+      - name: Verify pipeline and extension
+        run: npm run verify
+
+      - name: Upload database, coverage, and browser packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: wabbajack-nexus-index-${{ github.run_number }}
+          if-no-files-found: error
+          retention-days: 30
+          path: |
+            data/generated/database.sqlite
+            data/generated/public
+            dist/chrome
+            dist/firefox

@@ -1,0 +1,17 @@
+{
+  "name": "wabbajack-nexus-index",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A reproducible Skyrim Wabbajack membership index and Nexus Mods browser extension.",
+  "type": "module",
+  "scripts": {
+    "test:python": "python -m unittest discover -s tests/python -v",
+    "test:js": "node --test tests/js/*.test.mjs",
+    "test": "npm run test:python && npm run test:js",
+    "build": "node scripts/build-extension.mjs",
+    "verify": "npm test && npm run build"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
