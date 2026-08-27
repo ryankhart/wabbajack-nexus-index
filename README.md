@@ -4,7 +4,7 @@ See which Wabbajack modlists include a Nexus mod, right on its Nexus Mods page. 
 
 ## See it in action
 
-On the live Nexus Mods page for Sawmill Activation Fix, the extension starts with one row of four matching modlists:
+On the live Nexus Mods page for individual mods, the extension adds a row of Wabbajack modlists:
 
 ![The extension showing four Wabbajack modlists on the live Sawmill Activation Fix Nexus Mods page](docs/images/sawmill-activation-fix-preview.png)
 
@@ -12,7 +12,7 @@ Choose **View all** to expand the full grid:
 
 ![The extension showing all eight Wabbajack modlists on the live Sawmill Activation Fix Nexus Mods page](docs/images/sawmill-activation-fix-full-grid.png)
 
-On Wabbajack's Archive Search, the extension adds direct Nexus Mods links to recognized archive results:
+On Wabbajack's "Archive Search" page for a particular modlist, the extension adds direct Nexus Mods links to recognized archive results:
 
 ![The extension opening a Wabbajack archive result on its matching Nexus Mods page](docs/store-assets/wabbajack-archive-search-links.gif)
 
