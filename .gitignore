@@ -33,5 +33,8 @@ data/generated/
 .DS_Store
 Thumbs.db
 
+# Local Git worktrees
+.worktrees/
+
 # Hermes local citation ledger/cache
 .hermes/citations/
