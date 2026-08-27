@@ -1,34 +1,45 @@
 # Project State
 
+## Purpose
+
+This tracked file is the durable handoff for future development sessions. It records the current milestone, verified baseline, durable decisions, approval boundaries, and next executable action; it is not runtime configuration or a temporary task log.
+
 ## Mission
 
-Deliver a working, verified Chrome/Firefox extension and continuously reproducible Skyrim-family Wabbajack membership database.
+Maintain verified Chrome and Firefox extensions that show which Wabbajack modlists include the Nexus mod being viewed, add exact Nexus mod/file links to Wabbajack archive searches, and consume a continuously refreshed public dataset.
 
 ## Current milestone
 
-Grounded project bootstrap and first ingestion vertical slice.
+Prepare the first public browser-extension release while keeping the hosted dataset operational and Chrome/Firefox behavior in parity.
 
-## Verified evidence
+## Verified checkpoint — 2026-08-27
 
-- The live Wabbajack registered-source map yielded 139 repository entries and all 139 fetched in one snapshot.
-- That snapshot yielded 125 current Skyrim-family list records with 144.16 GiB of declared installer bytes.
-- The Wabbajack CDN exposes `definition.json.gz` plus numbered parts.
-- A temporary seekable reader opened Keizaal's real `.wabbajack`, read the `modlist` member, and found 1,011 archives, 841 Nexus archives, and 662 unique Nexus mod identities while fetching 6,772,015 of 13,063,471 bytes.
+- The public source repository is `ryankhart/wabbajack-nexus-index` under Apache-2.0.
+- GitHub Pages serves the validated JSON dataset at `https://ryankhart.github.io/wabbajack-nexus-index/`; the scheduled update workflow is enabled and its latest checked runs succeeded.
+- The currently hosted snapshot generated at `2026-08-27T00:42:02Z` is `4d1acdc1d0342a59f30377a8f576c3fa98ef65f3f69d91cee119c0eaf3089d3a` and reconciles all 221 discovered lists to terminal statuses: 180 indexed, 37 excluded, and 4 unsupported.
+- Exact Chrome and Firefox release-candidate packages built from source commit `6e457c9` loaded that hosted snapshot, rendered Nexus and Wabbajack integrations, switched to their separately generated bundled snapshot when the host was blocked, and reported no extension errors.
+- No GitHub Release exists yet; browser-store submission remains approval-gated.
 
 ## Decisions
 
 - Python 3.11 standard library for ingestion and SQLite.
 - Dependency-light JavaScript WebExtension with Node 22 built-in tests.
-- No Nexus API dependency for page identity or routine extension use.
+- Chrome and Firefox share source and data; every feature and bug fix preserves behavior parity.
+- GitHub Pages hosts validated static JSON; each package retains a verified bundled snapshot and falls back locally on any remote failure.
+- No Nexus API dependency, API key collection, analytics, or remote executable code.
 - Stable identity is `(Nexus game domain, mod ID)`.
 - Displayed list mod count is distinct Nexus mod pages in the current manifest.
 - “Complete” is source-set/snapshot scoped and reconciled, not a claim about private files.
-- Local and unpublished until explicit approval.
 
 ## Approval boundaries
 
-Ask before public remote creation/push, browser-store publication, license grant, credentials, or high-bandwidth full-installer fallback beyond an agreed budget.
+Ask before public pushes, GitHub Releases, browser-store submissions, credentials, or high-bandwidth full-installer fallback beyond an agreed budget.
+
+## Known drift
+
+- `README.md` still says automatic data publishing is disabled even though GitHub Pages deployment is live.
+- `docs/PROJECT_BRIEF.md` still describes enabling Pages as a future approval-gated action.
 
 ## Next executable action
 
-Finish the capability map/spec/plan, initialize Git, and commit the grounded scaffold.
+Reconcile the public documentation with the live Pages deployment, then prepare the first versioned Chrome and Firefox release for Ryan's review without publishing or submitting it.

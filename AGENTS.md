@@ -27,3 +27,5 @@ Build and maintain a verified data pipeline and resilient Chrome/Firefox extensi
 ## Durable state
 
 Read `.hermes/specs/wabbajack-nexus-index/CAPABILITY-MAP.md`, the module specs, `.hermes/plans/`, and `.hermes/STATE.md` before continuing multi-session work.
+
+Treat `.hermes/STATE.md` as a tracked durable handoff, not a temporary task log. Update it when the milestone, verified baseline, durable decisions, approval boundaries, or next executable action materially changes. Commit the update with the change that makes it true or as an immediate documentation checkpoint; keep evidence dated and concise, and do not leave stale state edits across unrelated commits.
