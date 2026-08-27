@@ -60,13 +60,13 @@ Private lists, paywalled lists, Discord attachments without stable public URLs, 
 - Rehosting Nexus descriptions, images, authors, files, or download statistics.
 - Claiming discovery of private/unregistered Wabbajack lists.
 - Inferring NSFW status from mod content.
-- Publishing a browser-store listing or public repository without explicit approval.
+- Publishing a browser-store listing without explicit approval.
 
 ## Dataset delivery decision
 
-GitHub Pages is the selected v1 host for the compact public JSON projection. Chrome and Firefox packages retain a verified bundled snapshot, prefer validated immutable Pages snapshots through a background transport, and fall back locally on any remote failure. The Pages workflow is implemented but cannot deploy unless repository variable `ENABLE_PAGES_DEPLOYMENT=true` is deliberately configured.
+GitHub Pages is the live v1 host for the compact public JSON projection. Its published entry point is `https://ryankhart.github.io/wabbajack-nexus-index/latest.json`. Chrome and Firefox packages retain a verified bundled snapshot, prefer validated immutable Pages snapshots through a background transport, and fall back locally on any remote failure. The scheduled workflow runs every four hours, verifies each candidate, and deploys only while the repository variable `ENABLE_PAGES_DEPLOYMENT` is `true`; that variable is currently enabled.
 
-The full SQLite working database and acquisition cache are not browser runtime artifacts and are never uploaded to Pages. A future SQLite research download may use a GitHub Release. The source repository is published as `ryankhart/wabbajack-nexus-index` under Apache-2.0. Enabling Pages, setting the deployment variable, publishing generated data, and browser-store distribution remain separate approval-gated decisions.
+The full SQLite working database and acquisition cache are not browser runtime artifacts and are never uploaded to Pages. A future SQLite research download may use a GitHub Release. The source repository is public as `ryankhart/wabbajack-nexus-index` under Apache-2.0, and Pages data publishing is active. Creating a GitHub Release or publishing in browser stores remains approval-gated.
 
 ## Sources
 

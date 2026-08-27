@@ -14,7 +14,7 @@ Choose **View all** to expand the full grid:
 
 ## Status
 
-The Chrome and Firefox versions are working and use the same Wabbajack data. The source is public under Apache 2.0. Automatic data publishing and browser-store releases are not enabled yet.
+The Chrome and Firefox versions are working and use the same Wabbajack data. The source is public under Apache 2.0. A scheduled workflow checks for updates every four hours and publishes verified data to GitHub Pages. Browser-store releases have not been published yet.
 
 This is an unofficial community project. It is not affiliated with or endorsed by Wabbajack or Nexus Mods.
 

@@ -15,7 +15,7 @@ Prepare the first public browser-extension release while keeping the hosted data
 ## Verified checkpoint — 2026-08-27
 
 - The public source repository is `ryankhart/wabbajack-nexus-index` under Apache-2.0.
-- GitHub Pages serves the validated JSON dataset at `https://ryankhart.github.io/wabbajack-nexus-index/`; the scheduled update workflow is enabled and its latest checked runs succeeded.
+- GitHub Pages serves the validated JSON dataset; its live entry point is `https://ryankhart.github.io/wabbajack-nexus-index/latest.json`. The scheduled update workflow is enabled and its latest checked runs succeeded.
 - The currently hosted snapshot generated at `2026-08-27T00:42:02Z` is `4d1acdc1d0342a59f30377a8f576c3fa98ef65f3f69d91cee119c0eaf3089d3a` and reconciles all 221 discovered lists to terminal statuses: 180 indexed, 37 excluded, and 4 unsupported.
 - Exact Chrome and Firefox release-candidate packages built from source commit `6e457c9` loaded that hosted snapshot, rendered Nexus and Wabbajack integrations, switched to their separately generated bundled snapshot when the host was blocked, and reported no extension errors.
 - No GitHub Release exists yet; browser-store submission remains approval-gated.
@@ -35,11 +35,6 @@ Prepare the first public browser-extension release while keeping the hosted data
 
 Ask before public pushes, GitHub Releases, browser-store submissions, credentials, or high-bandwidth full-installer fallback beyond an agreed budget.
 
-## Known drift
-
-- `README.md` still says automatic data publishing is disabled even though GitHub Pages deployment is live.
-- `docs/PROJECT_BRIEF.md` still describes enabling Pages as a future approval-gated action.
-
 ## Next executable action
 
-Reconcile the public documentation with the live Pages deployment, then prepare the first versioned Chrome and Firefox release for Ryan's review without publishing or submitting it.
+Prepare the first versioned Chrome and Firefox release for Ryan's review without publishing or submitting it.

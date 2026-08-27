@@ -11,7 +11,7 @@ Wabbajack registry
   -> NexusDownloader normalization
   -> SQLite working database
   -> deterministic JSON lookup shards + coverage report
-  -> immutable GitHub Pages snapshot (when explicitly enabled)
+  -> immutable GitHub Pages snapshot
   -> Chrome/Firefox background data transport
   -> Nexus Mods content script panel
 
