@@ -6,8 +6,8 @@ Prepare and publish `v0.1.0` Chrome and Firefox extension archives on GitHub wit
 
 ## Tasks
 
-- [ ] REL-T1 (AC-REL-001–003): RED permanent Firefox identity and versioned artifact expectations → GREEN build/package implementation → focused tests → full `npm run verify` → exact archive parity and checksum inspection.
-- [ ] REL-T2 (AC-REL-004–007): update installation/release documentation and durable state → stage explicit paths → independent exact-snapshot review → commit and push → publish `v0.1.0` with both archives and checksums → download and verify the live assets and metadata.
+- [x] REL-T1 (AC-REL-001–003): RED permanent Firefox identity and versioned artifact expectations → GREEN build/package implementation → focused tests → full `npm run verify` → exact archive parity and checksum inspection.
+- [x] REL-T2 (AC-REL-004–007): update installation/release documentation and durable state → stage explicit paths → independent exact-snapshot review → commit and push → publish `v0.1.0` with both archives and checksums → download and verify the live assets and metadata.
 
 ## Risks and Mitigations
 
@@ -29,3 +29,10 @@ Prepare and publish `v0.1.0` Chrome and Firefox extension archives on GitHub wit
 - Publish only after Ryan's explicit approval, which was given on 2026-08-27.
 - Do not publish to, submit to, or sign through either browser store.
 - Do not include SQLite, caches, credentials, or ignored diagnostic artifacts.
+
+## Completion Evidence — 2026-08-27
+
+- `npm run verify` passed 42 Python tests and 37 JavaScript tests, then built both versioned packages.
+- Each archive matched all 772 files in its generated browser directory byte-for-byte.
+- Independent review passed staged hash `e73d979076c04d4baa8a1d221536650d1b4a1635` with no security or logic findings.
+- Public tag `v0.1.0` points to `107af9c`; all three downloaded release assets matched the verified local files.

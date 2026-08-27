@@ -66,7 +66,7 @@ Private lists, paywalled lists, Discord attachments without stable public URLs, 
 
 GitHub Pages is the live v1 host for the compact public JSON projection. Its published entry point is `https://ryankhart.github.io/wabbajack-nexus-index/latest.json`. Chrome and Firefox packages retain a verified bundled snapshot, prefer validated immutable Pages snapshots through a background transport, and fall back locally on any remote failure. The scheduled workflow runs every four hours, verifies each candidate, and deploys only while the repository variable `ENABLE_PAGES_DEPLOYMENT` is `true`; that variable is currently enabled.
 
-The full SQLite working database and acquisition cache are not browser runtime artifacts and are never uploaded to Pages. A future SQLite research download may use a GitHub Release. The source repository is public as `ryankhart/wabbajack-nexus-index` under Apache-2.0, and Pages data publishing is active. Creating a GitHub Release or publishing in browser stores remains approval-gated.
+The full SQLite working database and acquisition cache are not browser runtime artifacts and are never uploaded to Pages. A future SQLite research download may use a GitHub Release. The source repository is public as `ryankhart/wabbajack-nexus-index` under Apache-2.0, Pages data publishing is active, and the first versioned browser packages are public in GitHub Release `v0.1.0`. Future GitHub Releases and browser-store publishing remain approval-gated.
 
 ## Sources
 
