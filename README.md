@@ -12,6 +12,10 @@ Choose **View all** to expand the full grid:
 
 ![The extension showing all eight Wabbajack modlists on the live Sawmill Activation Fix Nexus Mods page](docs/images/sawmill-activation-fix-full-grid.png)
 
+On Wabbajack's Archive Search, the extension adds direct Nexus Mods links to recognized archive results:
+
+![The extension opening a Wabbajack archive result on its matching Nexus Mods page](docs/store-assets/wabbajack-archive-search-links.gif)
+
 ## Status
 
 The Chrome and Firefox versions are working and use the same Wabbajack data. Versioned packages are available in the [v0.1.0 GitHub release](https://github.com/ryankhart/wabbajack-nexus-index/releases/tag/v0.1.0). A scheduled workflow checks for updates every four hours and publishes verified data to GitHub Pages. Browser-store releases have not been published yet.
