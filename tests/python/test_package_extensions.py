@@ -22,6 +22,7 @@ class PackageExtensionsTests(unittest.TestCase):
                 manifest = {
                     "manifest_version": 3,
                     "name": "Fixture",
+                    "version": "0.1.0",
                     "target": target,
                 }
                 files = {
@@ -41,8 +42,8 @@ class PackageExtensionsTests(unittest.TestCase):
 
             self.assertEqual(
                 {
-                    "chrome": artifacts / "wabbajack-nexus-index-chrome-dev.zip",
-                    "firefox": artifacts / "wabbajack-nexus-index-firefox-dev.xpi",
+                    "chrome": artifacts / "wabbajack-nexus-index-chrome-v0.1.0.zip",
+                    "firefox": artifacts / "wabbajack-nexus-index-firefox-v0.1.0.xpi",
                 },
                 second,
             )
@@ -65,7 +66,9 @@ class PackageExtensionsTests(unittest.TestCase):
                 target_root = dist / target
                 target_root.mkdir(parents=True)
                 (target_root / "manifest.json").write_text(
-                    json.dumps({"manifest_version": 3, "name": "Fixture"}),
+                    json.dumps(
+                        {"manifest_version": 3, "name": "Fixture", "version": "0.1.0"}
+                    ),
                     encoding="utf-8",
                 )
 
@@ -86,8 +89,32 @@ class PackageExtensionsTests(unittest.TestCase):
                 package_extensions(dist, artifacts)
 
             self.assertFalse(
-                (artifacts / "wabbajack-nexus-index-chrome-dev.zip").exists()
+                (artifacts / "wabbajack-nexus-index-chrome-v0.1.0.zip").exists()
             )
+
+    def test_rejects_mismatched_browser_versions(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            dist = root / "dist"
+            artifacts = root / "artifacts"
+            for target, version in (("chrome", "0.1.0"), ("firefox", "0.2.0")):
+                target_root = dist / target
+                target_root.mkdir(parents=True)
+                (target_root / "manifest.json").write_text(
+                    json.dumps(
+                        {
+                            "manifest_version": 3,
+                            "name": "Fixture",
+                            "version": version,
+                        }
+                    ),
+                    encoding="utf-8",
+                )
+
+            with self.assertRaisesRegex(ValueError, "versions do not match"):
+                package_extensions(dist, artifacts)
+
+            self.assertEqual([], list(artifacts.iterdir()))
 
     def test_rejects_a_linked_built_target_root(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -97,12 +124,24 @@ class PackageExtensionsTests(unittest.TestCase):
             outside_chrome = root / "outside-chrome"
             outside_chrome.mkdir()
             (outside_chrome / "manifest.json").write_text(
-                json.dumps({"manifest_version": 3, "name": "Outside fixture"}),
+                json.dumps(
+                    {
+                        "manifest_version": 3,
+                        "name": "Outside fixture",
+                        "version": "0.1.0",
+                    }
+                ),
                 encoding="utf-8",
             )
             (dist / "firefox").mkdir(parents=True)
             (dist / "firefox" / "manifest.json").write_text(
-                json.dumps({"manifest_version": 3, "name": "Firefox fixture"}),
+                json.dumps(
+                    {
+                        "manifest_version": 3,
+                        "name": "Firefox fixture",
+                        "version": "0.1.0",
+                    }
+                ),
                 encoding="utf-8",
             )
 
@@ -127,7 +166,7 @@ class PackageExtensionsTests(unittest.TestCase):
                 package_extensions(dist, artifacts)
 
             self.assertFalse(
-                (artifacts / "wabbajack-nexus-index-chrome-dev.zip").exists()
+                (artifacts / "wabbajack-nexus-index-chrome-v0.1.0.zip").exists()
             )
 
 

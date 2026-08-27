@@ -33,15 +33,15 @@ The data comes from Wabbajack's registered public modlists. Private and unregist
 
 ## Local browser testing
 
-Run `npm run build` after generating the public dataset. The command writes browser directories under `dist/` and matching development archives under `artifacts/`.
+Run `npm run build` after generating the public dataset. The command writes browser directories under `dist/` and matching versioned archives under `artifacts/`.
 
 ### Chrome
 
-Open `chrome://extensions`, enable **Developer mode**, choose **Load unpacked**, and select `dist/chrome`. The ignored `artifacts/wabbajack-nexus-index-chrome-dev.zip` is the byte-equivalent packaged snapshot for transfer or CI retention; unpack it before loading it locally in Chrome.
+Open `chrome://extensions`, enable **Developer mode**, choose **Load unpacked**, and select `dist/chrome`. The ignored `artifacts/wabbajack-nexus-index-chrome-v0.1.0.zip` is the byte-equivalent packaged snapshot for transfer or CI retention; unpack it before loading it locally in Chrome.
 
 ### Firefox
 
-The ignored local development package is written to `artifacts/wabbajack-nexus-index-firefox-dev.xpi`. In Firefox, open `about:debugging#/runtime/this-firefox`, choose **Load Temporary Add-on…**, and select that file. Temporary add-ons are removed when Firefox exits; a normal persistent install requires Mozilla signing.
+The ignored versioned package is written to `artifacts/wabbajack-nexus-index-firefox-v0.1.0.xpi`. In Firefox, open `about:debugging#/runtime/this-firefox`, choose **Load Temporary Add-on…**, and select that file. Temporary add-ons are removed when Firefox exits; a normal persistent install requires Mozilla signing.
 
 ## For developers
 

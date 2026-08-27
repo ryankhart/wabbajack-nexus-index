@@ -6,8 +6,9 @@
 | `dataset-publication` | Preserve indexed history and emit deterministic, validated lookup artifacts with provenance and freshness | `registry-ingestion` |
 | `extension-surface` | Show matching Wabbajack lists on Nexus mod pages and add exact Nexus mod/file links to Wabbajack archive search results in a resilient Chrome/Firefox UI | `dataset-publication` |
 | `github-hosting` | Deliver immutable validated JSON snapshots through explicitly gated GitHub Pages deployment with packaged fallback | `dataset-publication`, `extension-surface` |
+| `release-distribution` | Publish versioned, checksummed Chrome and Firefox packages on GitHub before any browser-store submission | `extension-surface`, `github-hosting` |
 
-Build order: `registry-ingestion` → `dataset-publication` → `extension-surface` → `github-hosting`.
+Build order: `registry-ingestion` → `dataset-publication` → `extension-surface` → `github-hosting` → `release-distribution`.
 
 ## Boundary contracts
 
@@ -38,6 +39,13 @@ Build order: `registry-ingestion` → `dataset-publication` → `extension-surfa
 - a small validated pointer for remote extension clients;
 - an explicit repository-variable publication gate;
 - Pages deployment only after the complete canonical verification gate.
+
+### `release-distribution` provides
+
+- one permanent extension version and Firefox add-on identity;
+- deterministic, versioned Chrome and Firefox archives built from the same source commit and bundled dataset;
+- published SHA-256 checksums and installation limitations for each browser;
+- a GitHub release boundary independent from later Chrome Web Store and AMO listings.
 
 ## Scope validation
 

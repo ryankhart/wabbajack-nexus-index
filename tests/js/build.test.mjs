@@ -21,6 +21,9 @@ async function readTree(root) {
 }
 
 test("builds minimally permissioned Chrome and Firefox packages with remote fallback", async (t) => {
+  const packageJson = JSON.parse(
+    await readFile(new URL("../../package.json", import.meta.url), "utf8")
+  );
   const root = await mkdtemp(path.join(os.tmpdir(), "wjni-build-"));
   const data = path.join(root, "data");
   const output = path.join(root, "dist");
@@ -55,6 +58,7 @@ test("builds minimally permissioned Chrome and Firefox packages with remote fall
     const targetRoot = path.join(output, target);
     const manifest = JSON.parse(await readFile(path.join(targetRoot, "manifest.json")));
     assert.equal(manifest.manifest_version, 3);
+    assert.equal(manifest.version, packageJson.version);
     assert.equal(manifest.name, "Unofficial Wabbajack-Nexus Index");
     assert.equal(
       manifest.description,
@@ -226,7 +230,7 @@ test("builds minimally permissioned Chrome and Firefox packages with remote fall
   );
   assert.equal(
     firefox.browser_specific_settings.gecko.id,
-    "wabbajack-nexus-index@local"
+    "wabbajack-nexus-index@ryankhart.com"
   );
   assert.equal(
     firefox.browser_specific_settings.gecko.strict_min_version,
@@ -255,7 +259,7 @@ test("builds minimally permissioned Chrome and Firefox packages with remote fall
   assert.deepEqual(chrome, normalizedFirefox);
 });
 
-test("canonical build packages Chrome and Firefox development artifacts", async () => {
+test("canonical build packages versioned Chrome and Firefox release artifacts", async () => {
   const [packageJson, workflow] = await Promise.all([
     readFile(new URL("../../package.json", import.meta.url)).then(JSON.parse),
     readFile(new URL("../../.github/workflows/update-index.yml", import.meta.url), "utf8"),
@@ -265,6 +269,6 @@ test("canonical build packages Chrome and Firefox development artifacts", async 
     packageJson.scripts.build,
     "node scripts/build-extension.mjs && python scripts/package_extensions.py"
   );
-  assert.match(workflow, /artifacts\/wabbajack-nexus-index-chrome-dev\.zip/);
-  assert.match(workflow, /artifacts\/wabbajack-nexus-index-firefox-dev\.xpi/);
+  assert.match(workflow, /artifacts\/wabbajack-nexus-index-chrome-v0\.1\.0\.zip/);
+  assert.match(workflow, /artifacts\/wabbajack-nexus-index-firefox-v0\.1\.0\.xpi/);
 });

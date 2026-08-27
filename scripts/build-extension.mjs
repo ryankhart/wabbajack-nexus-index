@@ -67,7 +67,7 @@ function manifestFor(target) {
     manifest.background = { scripts: ["background.js"] };
     manifest.browser_specific_settings = {
       gecko: {
-        id: "wabbajack-nexus-index@local",
+        id: "wabbajack-nexus-index@ryankhart.com",
         strict_min_version: "142.0",
         data_collection_permissions: {
           required: ["none"],

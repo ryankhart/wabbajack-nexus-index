@@ -62,8 +62,8 @@ jobs:
             data/generated/public
             dist/chrome
             dist/firefox
-            artifacts/wabbajack-nexus-index-chrome-dev.zip
-            artifacts/wabbajack-nexus-index-firefox-dev.xpi
+            artifacts/wabbajack-nexus-index-chrome-v0.1.0.zip
+            artifacts/wabbajack-nexus-index-firefox-v0.1.0.xpi
 
       - name: Configure GitHub Pages
         if: ${{ vars.ENABLE_PAGES_DEPLOYMENT == 'true' }}

@@ -1,17 +1,20 @@
 from __future__ import annotations
 
+import json
 import os
+import re
 import stat
 import zipfile
 from pathlib import Path
 
 
-_TARGET_ARCHIVES = {
-    "chrome": "wabbajack-nexus-index-chrome-dev.zip",
-    "firefox": "wabbajack-nexus-index-firefox-dev.xpi",
+_TARGET_SUFFIXES = {
+    "chrome": ".zip",
+    "firefox": ".xpi",
 }
 _ZIP_TIMESTAMP = (1980, 1, 1, 0, 0, 0)
 _REPARSE_POINT = getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0)
+_VERSION_PATTERN = re.compile(r"(?:0|[1-9]\d*)(?:\.(?:0|[1-9]\d*)){0,3}")
 
 
 def _is_link_or_reparse_point(path: Path) -> bool:
@@ -74,14 +77,33 @@ def _write_archive(target_root: Path, archive_path: Path) -> None:
         temporary_path.unlink(missing_ok=True)
 
 
+def _target_version(target_root: Path) -> str:
+    target_files = _target_files(target_root)
+    manifest_path = target_root / "manifest.json"
+    if manifest_path not in target_files:
+        raise ValueError(f"Built extension manifest is missing: {manifest_path}")
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    version = manifest.get("version")
+    if not isinstance(version, str) or _VERSION_PATTERN.fullmatch(version) is None:
+        raise ValueError(f"Built extension has an invalid version: {target_root.name}")
+    return version
+
+
 def package_extensions(dist_root: Path, artifacts_root: Path) -> dict[str, Path]:
     dist_root = Path(dist_root).resolve()
     artifacts_root = Path(artifacts_root).resolve()
     artifacts_root.mkdir(parents=True, exist_ok=True)
 
+    versions = {
+        target: _target_version(dist_root / target) for target in _TARGET_SUFFIXES
+    }
+    if len(set(versions.values())) != 1:
+        raise ValueError("Built Chrome and Firefox extension versions do not match")
+    version = next(iter(versions.values()))
     archives = {
-        target: artifacts_root / archive_name
-        for target, archive_name in _TARGET_ARCHIVES.items()
+        target: artifacts_root
+        / f"wabbajack-nexus-index-{target}-v{version}{archive_suffix}"
+        for target, archive_suffix in _TARGET_SUFFIXES.items()
     }
     for target, archive_path in archives.items():
         _write_archive(dist_root / target, archive_path)

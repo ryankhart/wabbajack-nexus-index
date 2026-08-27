@@ -49,10 +49,10 @@ DOM selectors remain adapter details and must be discovered/verified against the
 
 ### REQ-EXT-005: Work in Chrome and Firefox
 
-- AC-EXT-017: One source tree builds valid Manifest V3 directories plus a Chrome development ZIP and Firefox development XPI from the same generated dataset.
+- AC-EXT-017: One source tree builds valid Manifest V3 directories plus versioned Chrome ZIP and Firefox XPI archives from the same generated dataset.
 - AC-EXT-018: Host permissions are limited to supported Nexus page origins and the configured static dataset origin.
 - AC-EXT-019: The package contains no remotely executed code, telemetry, Nexus credential collection, or unsafe HTML insertion.
-- AC-EXT-029: Each development archive contains exactly the files and bytes from its corresponding built target directory, and Chrome/Firefox package contents differ only where browser-specific manifest metadata requires it.
+- AC-EXT-029: Each versioned archive contains exactly the files and bytes from its corresponding built target directory, and Chrome/Firefox package contents differ only where browser-specific manifest metadata requires it.
 
 ### REQ-EXT-006: Accessible native interaction
 
@@ -122,7 +122,7 @@ Pure tests cover URL parsing, projection, ordering, and safe DOM construction. S
 
 ## Success Criteria
 
-Both browser packages and their development archives build reproducibly and load without errors. On a known indexed Nexus mod page, they show the exact matching list set with required blue counts, red `Adult` text only for Wabbajack-classified NSFW lists, working official links, resilient accessible states, and a clearly unofficial identity using the approved supplied legible small-size mark. On a canonical Wabbajack archive-search page, they add exact Nexus mod and file links to recognized entries without changing ambiguous or non-Nexus entries.
+Both browser packages and their versioned archives build reproducibly and load without errors. On a known indexed Nexus mod page, they show the exact matching list set with required blue counts, red `Adult` text only for Wabbajack-classified NSFW lists, working official links, resilient accessible states, and a clearly unofficial identity using the approved supplied legible small-size mark. On a canonical Wabbajack archive-search page, they add exact Nexus mod and file links to recognized entries without changing ambiguous or non-Nexus entries.
 
 ## Resolved Decisions
 
